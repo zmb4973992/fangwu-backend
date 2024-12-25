@@ -1,0 +1,114 @@
+#value要加双引号，否则容易读取出错，比如0030会读取为30
+
+#对外开放的访问端口
+access:
+  port: "8000"
+
+db:
+  host: "localhost"
+  port: "5432"
+  name: "postgres"
+  username: "postgres"
+  password: "028912"
+
+redis:
+  enabled: "false"
+  host: "localhost"
+  port: "6379"
+  password: ""
+
+gin:
+  #由于gin的限制，可选值为：debug/test/release
+  #不填或填其他值的话，将视为debug
+  mode: "debug"
+
+jwt:
+  #自定义密钥
+  secret-key: "kv*Fkdgh^@kd2)47~!327feDJ"
+  #有效天数，登录后可以几天免登录
+  validity-days: "30"
+
+log: 
+  #日志文件的路径
+  log-path: "d:/log"
+  #在进行切割之前，日志文件的最大大小(MB)
+  log-max-size: "10"
+  #保留旧文件的最大个数
+  log-max-backup: "100"
+  #保留旧文件的最大天数
+  log-max-age: "365"
+  #是否压缩旧文件，默认为否
+  log-compress: "False"
+
+upload:
+  #服务器上保存上传文件的路径
+  storage-path: 
+      windows: "d:/uploaded_files"
+      linux: "/fangwu8/uploaded_files"
+  thumbnail-path:
+      windows: "d:/thumbnails"
+      linux: "/fangwu8/thumbnails"
+  #上传文件的最大尺寸(MB)
+  max-size: "50"
+  #允许的文件后缀，不填的话默认为所有类型
+  allowed-exts: [".jpg",".jpeg",".png",".bmp"]
+  
+
+download:
+  #对外暴露的相对下载路径
+  relative-path: "/download"
+  #公网ip，建议填写。不填的话系统会自动寻找，结果可能不一定正确
+  # public-ip: "113.44.167.180"
+  public-ip: "127.0.0.1"
+
+
+email:
+  #发送邮件服务器，一般是smtp
+  outgoing-mail-server: "smtp.qq.com"
+  #端口，使用QQ邮箱时，587可以正常用，465用不了
+  port: "587"
+  account: "19725912@qq.com"
+  #注意：QQ邮箱、88邮箱都需要使用授权码，而不是邮箱密码
+  password: "ejusnukrlniabgdd"
+
+#列表分页
+paging:
+  #单页默认条数
+  page-size: "12"
+  #单页最大条数
+  max-page-size: "10000"
+
+#全局限流（采用令牌桶原理）
+rate-limit:
+  #每秒往令牌桶放XX个令牌，可以为小数
+  limit: "1000"
+  #令牌桶最大容量，必须为整数
+  burst: "5000"
+
+#验证码
+captcha:
+  #图片宽度(像素)
+  width: "100"
+  #图片高度(像素)
+  height: "40"
+  #噪点数量
+  noise-count: "10"
+  #字符长度
+  length: "4"
+  #登录时是否开启验证码
+  enabled-for-login: "false"
+#超级密码
+super-password:
+  #是否开启
+  enabled: "true"
+  #密码
+  password: "zzzzzz"
+
+#注册限制
+register-limit:
+  #是否开启注册限制
+  #目前限制到ipv4的第4段，即1.1.1.x视为相同用户
+  enabled: "true"
+  #限制时间，单位为天
+  Interval: "7"
+
