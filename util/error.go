@@ -90,6 +90,7 @@ const (
 	ErrorFailToCreateViewContact
 	ErrorFailToDeleteViewContact
 	ErrorFailToGetViewContact
+	test
 )
 
 // Message 自定义错误的message
