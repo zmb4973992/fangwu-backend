@@ -79,10 +79,10 @@ func (u *User) Register(c *gin.Context) {
 	// ip := c.ClientIP()
 	param.Ip = &ip
 
-	resCode, errDetail := param.Create()
+	result, resCode, errDetail := param.Create()
 	c.JSON(
 		http.StatusOK,
-		response.GenerateSingle(nil, resCode, errDetail))
+		response.GenerateSingle(result, resCode, errDetail))
 }
 
 func (u *User) Update(c *gin.Context) {

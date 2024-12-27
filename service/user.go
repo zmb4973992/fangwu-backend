@@ -47,6 +47,7 @@ type UserResult struct {
 	Username     string `json:"username,omitempty"`
 	EmailAddress string `json:"email_address,omitempty"`
 	IsValid      *bool  `json:"is_valid,omitempty"`
+	AccessToken  string `json:"access_token,omitempty"`
 }
 
 func (u *UserLogin) Login() (result *LoginResult, resCode int, errDetail *util.ErrDetail) {
@@ -113,7 +114,7 @@ func (u *UserGet) Get() (result *UserResult, resCode int, errDetail *util.ErrDet
 	return &tmpRes, util.Success, nil
 }
 
-func (u *UserCreate) Create() (resCode int, errDetail *util.ErrDetail) {
+func (u *UserCreate) Create() (result *UserResult, resCode int, errDetail *util.ErrDetail) {
 	var user model.User
 
 	// 检查用户名是否已存在
@@ -121,7 +122,7 @@ func (u *UserCreate) Create() (resCode int, errDetail *util.ErrDetail) {
 	global.Db.Model(model.User{}).
 		Where("username =?", u.Username).Count(&count)
 	if count > 0 {
-		return util.ErrorUsernameExists, nil
+		return nil, util.ErrorUsernameExists, nil
 	}
 
 	//校验用户注册限制
@@ -136,7 +137,7 @@ func (u *UserCreate) Create() (resCode int, errDetail *util.ErrDetail) {
 				Where("created_at > ?", timeLimit).
 				Count(&count)
 			if count > 0 {
-				return util.ErrorTooFrequentRegistration, nil
+				return nil, util.ErrorTooFrequentRegistration, nil
 			}
 		}
 	}
@@ -148,7 +149,7 @@ func (u *UserCreate) Create() (resCode int, errDetail *util.ErrDetail) {
 	user.Password, err = encryptAndCompare.Encrypt(u.Password)
 
 	if err != nil {
-		return util.ErrorFailToEncrypt, util.GetErrDetail(err)
+		return nil, util.ErrorFailToEncrypt, util.GetErrDetail(err)
 	}
 
 	user.RegisterIp = u.Ip
@@ -158,10 +159,18 @@ func (u *UserCreate) Create() (resCode int, errDetail *util.ErrDetail) {
 
 	err = global.Db.Create(&user).Error
 	if err != nil {
-		return util.ErrorFailToCreateUser, util.GetErrDetail(err)
+		return nil, util.ErrorFailToCreateUser, util.GetErrDetail(err)
 	}
 
-	return util.Success, nil
+	var userLogin UserLogin
+	userLogin.Username = u.Username
+	userLogin.Password = u.Password
+	tmpRes, resCode, errDetail := userLogin.Login()
+	if resCode != util.Success {
+		return nil, util.ErrorFailToCreateUser, util.GetErrDetail(err)
+	}
+
+	return &UserResult{AccessToken: tmpRes.AccessToken}, util.Success, nil
 }
 
 func (u *UserUpdate) Update() (resCode int, errDetail *util.ErrDetail) {

@@ -108,7 +108,7 @@ super-password:
 register-limit:
   #是否开启注册限制
   #目前限制到ipv4的第4段，即1.1.1.x视为相同用户
-  enabled: "true"
+  enabled: "false"
   #限制时间，单位为天
   Interval: "7"
 
