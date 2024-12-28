@@ -75,8 +75,8 @@ func (u *User) Register(c *gin.Context) {
 		return
 	}
 
-	ip := "38.39.55.123"
-	// ip := c.ClientIP()
+	// ip := "38.39.55.123"
+	ip := c.ClientIP()
 	param.Ip = &ip
 
 	result, resCode, errDetail := param.Create()

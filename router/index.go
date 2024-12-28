@@ -29,6 +29,7 @@ type routerEnhancer struct {
 	captcha
 	favorite
 	viewContact
+	administrativeDivision
 }
 
 // LoadEngine 初始化引擎,最终返回*gin.Engine类型，给main调用
@@ -71,6 +72,7 @@ func LoadEngine() *gin.Engine {
 	routerEnhancer.appendCaptchaRouterTo(defaultGroup)
 	routerEnhancer.appendFavoriteRouterTo(defaultGroup)
 	routerEnhancer.appendViewContactRouterTo(defaultGroup)
+	routerEnhancer.appendAdministrativeDivisionRouterTo(defaultGroup)
 
 	//引擎配置完成后，返回
 	return engine

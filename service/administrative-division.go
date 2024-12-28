@@ -11,16 +11,17 @@ type administrativeDivisionGet struct {
 	Code int `json:"code" binding:"required"`
 }
 
-type administrativeDivisionGetList struct {
+type AdministrativeDivisionGetList struct {
 	ParentCode int64 `json:"parent_code" binding:"required"`
 }
 
-type administrativeDivisionResult struct {
-	Code int    `json:"code,omitempty"`
-	Name string `json:"name,omitempty"`
+type AdministrativeDivisionResult struct {
+	Code         int    `json:"code,omitempty"`
+	Name         string `json:"name,omitempty"`
+	PinyinPrefix string `json:"pinyin_prefix,omitempty"`
 }
 
-func (a *administrativeDivisionGet) Get() (result *administrativeDivisionResult, resCode int, errDetail *util.ErrDetail) {
+func (a *administrativeDivisionGet) Get() (result *AdministrativeDivisionResult, resCode int, errDetail *util.ErrDetail) {
 	var administrativeDivision model.AdministrativeDivision
 	err := global.Db.Where("code = ?", a.Code).
 		First(&administrativeDivision).Error
@@ -28,25 +29,26 @@ func (a *administrativeDivisionGet) Get() (result *administrativeDivisionResult,
 		return nil, util.ErrorFailToGetAdministrativeDivision, util.GetErrDetail(err)
 	}
 
-	var tmpRes administrativeDivisionResult
+	var tmpRes AdministrativeDivisionResult
 	tmpRes.Code = administrativeDivision.Code
 	tmpRes.Name = administrativeDivision.Name
 
 	return &tmpRes, util.Success, nil
 }
 
-func (a *administrativeDivisionGetList) GetList() (results []administrativeDivisionResult, paging *response.Paging, resCode int, errDetail *util.ErrDetail) {
+func (a *AdministrativeDivisionGetList) GetList() (results []AdministrativeDivisionResult, paging *response.Paging, resCode int, errDetail *util.ErrDetail) {
 	var administrativeDivisions []model.AdministrativeDivision
-	err := global.Db.Where("parent_code =?", a.ParentCode).
+	err := global.Db.Where("parent_code = ?", a.ParentCode).
 		Find(&administrativeDivisions).Error
 	if err != nil {
 		return nil, nil, util.ErrorFailToGetAdministrativeDivision, util.GetErrDetail(err)
 	}
 
 	for _, v := range administrativeDivisions {
-		var result administrativeDivisionResult
+		var result AdministrativeDivisionResult
 		result.Code = v.Code
 		result.Name = v.Name
+		result.PinyinPrefix = v.PinyinPrefix
 		results = append(results, result)
 	}
 

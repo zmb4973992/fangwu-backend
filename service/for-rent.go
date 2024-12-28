@@ -78,10 +78,10 @@ type ForRentResult struct {
 	MobilePhone             string                        `json:"mobile_phone,omitempty"`       //手机号
 	WeChatId                string                        `json:"wechat_id,omitempty"`          //微信id
 	Files                   []ImageResult                 `json:"files,omitempty"`
-	AdministrativeDivision1 *administrativeDivisionResult `json:"administrative_division_1,omitempty"`
-	AdministrativeDivision2 *administrativeDivisionResult `json:"administrative_division_2,omitempty"`
-	AdministrativeDivision3 *administrativeDivisionResult `json:"administrative_division_3,omitempty"`
-	AdministrativeDivision4 *administrativeDivisionResult `json:"administrative_division_4,omitempty"`
+	AdministrativeDivision1 *AdministrativeDivisionResult `json:"administrative_division_1,omitempty"`
+	AdministrativeDivision2 *AdministrativeDivisionResult `json:"administrative_division_2,omitempty"`
+	AdministrativeDivision3 *AdministrativeDivisionResult `json:"administrative_division_3,omitempty"`
+	AdministrativeDivision4 *AdministrativeDivisionResult `json:"administrative_division_4,omitempty"`
 	Community               string                        `json:"community,omitempty"` //小区
 }
 
