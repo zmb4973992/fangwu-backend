@@ -30,10 +30,10 @@ type Delete struct {
 }
 
 type AdminDiv struct {
-	AdministrativeDivision1 *int `json:"administrative_division_1" gorm:"index;column:administrative_division_1;"`
-	AdministrativeDivision2 *int `json:"administrative_division_2" gorm:"index;column:administrative_division_2;"`
-	AdministrativeDivision3 *int `json:"administrative_division_3" gorm:"index;column:administrative_division_3;"`
-	AdministrativeDivision4 *int `json:"administrative_division_4" gorm:"index;column:administrative_division_4;"`
+	Level1AdminDiv *int `json:"level_1_admin_div" gorm:"index;column:level_1_admin_div;"`
+	Level2AdminDiv *int `json:"level_2_admin_div" gorm:"index;column:level_2_admin_div;"`
+	Level3AdminDiv *int `json:"level_3_admin_div" gorm:"index;column:level_3_admin_div;"`
+	Level4AdminDiv *int `json:"level_4_admin_div" gorm:"index;column:level_4_admin_div;"`
 }
 
 type Archive struct {
