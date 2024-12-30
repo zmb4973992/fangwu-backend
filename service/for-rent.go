@@ -30,6 +30,8 @@ type ForRentCreate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`           //三级行政区划（乡/镇）
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`           //四级行政区划（村/社区）
 	Community         string  `json:"community" binding:"required"`          //小区
+	HouseType         int64   `json:"house_type,omitempty"`                  //户型，如一室、二室等
+	BuildingArea      int     `json:"building_area,omitempty"`               //建筑面积
 }
 
 type ForRentUpdate struct {
@@ -47,6 +49,8 @@ type ForRentUpdate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`  //三级行政区划（乡/镇）
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`  //四级行政区划（村/社区）
 	Community         string  `json:"community,omitempty"`          //小区
+	HouseType         int64   `json:"house_type,omitempty"`         //户型，如一室、二室等
+	BuildingArea      int     `json:"building_area,omitempty"`      //建筑面积
 }
 
 type ForRentDelete struct {
@@ -64,6 +68,7 @@ type ForRentGetList struct {
 	Ids                []int64 `json:"-"`                              //id列表
 	Keyword            string  `json:"keyword,omitempty"`              //关键字
 	Community          string  `json:"community,omitempty"`            //小区
+	HouseType          int64   `json:"house_type,omitempty"`           //户型，如一室、二室等
 }
 
 type ForRentResult struct {
@@ -82,7 +87,9 @@ type ForRentResult struct {
 	Level2AdminDiv    *AdministrativeDivisionResult `json:"level_2_admin_div,omitempty"`
 	Level3AdminDiv    *AdministrativeDivisionResult `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    *AdministrativeDivisionResult `json:"level_4_admin_div,omitempty"`
-	Community         string                        `json:"community,omitempty"` //小区
+	Community         string                        `json:"community,omitempty"`     //小区
+	HouseType         *DictionaryDetailResult       `json:"house_type,omitempty"`    //户型，如一室、二室等
+	BuildingArea      int                           `json:"building_area,omitempty"` //建筑面积
 }
 
 func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
@@ -144,6 +151,18 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 
 	//小区
 	tmpRes.Community = forRent.Community
+
+	//户型
+	if forRent.HouseType != nil {
+		var houseType dictionaryDetailGet
+		houseType.Id = *forRent.HouseType
+		tmpRes.HouseType, _, _ = houseType.Get()
+	}
+
+	//建筑面积
+	if forRent.BuildingArea != nil {
+		tmpRes.BuildingArea = *forRent.BuildingArea
+	}
 
 	return &tmpRes, util.Success, nil
 }
@@ -230,7 +249,18 @@ func (f *ForRentCreate) Create() (result *ForRentResult, resCode int, errDetail 
 		forRent.Level4AdminDiv = &f.Level4AdminDiv
 	}
 
+	//小区
 	forRent.Community = f.Community
+
+	//户型
+	if f.HouseType > 0 {
+		forRent.HouseType = &f.HouseType
+	}
+
+	//建筑面积
+	if f.BuildingArea > 0 {
+		forRent.BuildingArea = &f.BuildingArea
+	}
 
 	err := tx.Create(&forRent).Error
 	if err != nil {
@@ -332,8 +362,19 @@ func (f *ForRentUpdate) Update() (result *ForRentResult, resCode int, errDetail 
 		forRent["level_4_admin_div"] = f.Level4AdminDiv
 	}
 
+	//小区
 	if f.Community != "" {
 		forRent["community"] = f.Community
+	}
+
+	//户型
+	if f.HouseType > 0 {
+		forRent["house_type"] = f.HouseType
+	}
+
+	//建筑面积
+	if f.BuildingArea > 0 {
+		forRent["building_area"] = f.BuildingArea
 	}
 
 	err := tx.Model(&model.ForRent{}).
@@ -430,6 +471,9 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 	if f.Community != "" {
 		db = db.Where("community LIKE ?", "%"+f.Community+"%")
 	}
+	if f.HouseType > 0 {
+		db = db.Where("house_type = ?", f.HouseType)
+	}
 
 	// count
 	var count int64
@@ -496,15 +540,15 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 		genderRestriction.Id = forRent.GenderRestriction
 		result.GenderRestriction, _, _ = genderRestriction.Get()
 
-		if forRent.MobilePhone != nil {
-			moblelePhone := *forRent.MobilePhone
-			result.MobilePhone = moblelePhone[:(len(*forRent.MobilePhone)-2)] + "**"
-		}
+		// if forRent.MobilePhone != nil {
+		// 	moblelePhone := *forRent.MobilePhone
+		// 	result.MobilePhone = moblelePhone[:(len(*forRent.MobilePhone)-2)] + "**"
+		// }
 
-		if forRent.WeChatId != nil {
-			wechatId := *forRent.WeChatId
-			result.WeChatId = wechatId[:(len(*forRent.WeChatId)-2)] + "**"
-		}
+		// if forRent.WeChatId != nil {
+		// 	wechatId := *forRent.WeChatId
+		// 	result.WeChatId = wechatId[:(len(*forRent.WeChatId)-2)] + "**"
+		// }
 
 		//获取文件下载地址
 		var download imageGetList
@@ -533,7 +577,20 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 			adminDiv.Code = *forRent.Level4AdminDiv
 			result.Level4AdminDiv, _, _ = adminDiv.Get()
 		}
+		//小区
 		result.Community = forRent.Community
+
+		//户型
+		if forRent.HouseType != nil {
+			var houseType dictionaryDetailGet
+			houseType.Id = *forRent.HouseType
+			result.HouseType, _, _ = houseType.Get()
+		}
+
+		//建筑面积
+		if forRent.BuildingArea != nil {
+			result.BuildingArea = *forRent.BuildingArea
+		}
 
 		results = append(results, result)
 	}

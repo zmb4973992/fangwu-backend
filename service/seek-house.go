@@ -31,6 +31,8 @@ type SeekHouseCreate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
+	HouseType         int64   `json:"house_type,omitempty"`    //户型，如一室、二室等
+	BuildingArea      int     `json:"building_area,omitempty"` //建筑面积
 }
 
 type SeekHouseUpdate struct {
@@ -49,6 +51,8 @@ type SeekHouseUpdate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
+	HouseType         int64   `json:"house_type,omitempty"`    //户型，如一室、二室等
+	BuildingArea      int     `json:"building_area,omitempty"` //建筑面积
 }
 
 type SeekHouseDelete struct {
@@ -65,6 +69,7 @@ type SeekHouseGetList struct {
 	Ids               []int64 `json:"-"`
 	Keyword           string  `json:"keyword,omitempty"`
 	Community         string  `json:"community,omitempty"`
+	HouseType         int64   `json:"house_type,omitempty"` //户型，如一室、二室等
 }
 
 type SeekHouseResult struct {
@@ -85,6 +90,8 @@ type SeekHouseResult struct {
 	Level3AdminDiv    *AdministrativeDivisionResult `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    *AdministrativeDivisionResult `json:"level_4_admin_div,omitempty"`
 	Community         string                        `json:"community,omitempty"`
+	HouseType         *DictionaryDetailResult       `json:"house_type,omitempty"`    //户型，如一室、二室等
+	BuildingArea      int                           `json:"building_area,omitempty"` //建筑面积
 }
 
 func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *util.ErrDetail) {
@@ -156,6 +163,18 @@ func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *u
 
 	//小区
 	tmpRes.Community = seekHouse.Community
+
+	//户型
+	if seekHouse.HouseType != nil {
+		var houseType dictionaryDetailGet
+		houseType.Id = *seekHouse.HouseType
+		tmpRes.HouseType, _, _ = houseType.Get()
+	}
+
+	//建筑面积
+	if seekHouse.BuildingArea != nil {
+		tmpRes.BuildingArea = *seekHouse.BuildingArea
+	}
 
 	return &tmpRes, util.Success, nil
 }
@@ -244,6 +263,16 @@ func (s *SeekHouseCreate) Create() (result *SeekHouseResult, resCode int, errDet
 
 	//小区
 	seekHouse.Community = s.Community
+
+	//户型
+	if s.HouseType > 0 {
+		seekHouse.HouseType = &s.HouseType
+	}
+
+	//建筑面积
+	if s.BuildingArea > 0 {
+		seekHouse.BuildingArea = &s.BuildingArea
+	}
 
 	err := tx.Create(&seekHouse).Error
 	if err != nil {
@@ -354,6 +383,16 @@ func (s *SeekHouseUpdate) Update() (result *SeekHouseResult, resCode int, errDet
 		seekHouse["community"] = s.Community
 	}
 
+	//户型
+	if s.HouseType > 0 {
+		seekHouse["house_type"] = s.HouseType
+	}
+
+	//建筑面积
+	if s.BuildingArea > 0 {
+		seekHouse["building_area"] = s.BuildingArea
+	}
+
 	err := tx.Model(&model.SeekHouse{}).
 		Where("id =?", s.Id).
 		Where("creator = ?", s.LastModifier).
@@ -444,6 +483,12 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 	if s.Keyword != "" {
 		db = db.Where("description like ?", "%"+s.Keyword+"%")
 	}
+	if s.Community != "" {
+		db = db.Where("community LIKE ?", "%"+s.Community+"%")
+	}
+	if s.HouseType > 0 {
+		db = db.Where("house_type = ?", s.HouseType)
+	}
 
 	// count
 	var count int64
@@ -516,15 +561,15 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 		genderRestriction.Id = seekHouse.GenderRestriction
 		result.GenderRestriction, _, _ = genderRestriction.Get()
 
-		if seekHouse.MobilePhone != nil {
-			moblelePhone := *seekHouse.MobilePhone
-			result.MobilePhone = moblelePhone[:(len(*seekHouse.MobilePhone)-2)] + "**"
-		}
+		// if seekHouse.MobilePhone != nil {
+		// 	moblelePhone := *seekHouse.MobilePhone
+		// 	result.MobilePhone = moblelePhone[:(len(*seekHouse.MobilePhone)-2)] + "**"
+		// }
 
-		if seekHouse.WeChatId != nil {
-			wechatId := *seekHouse.WeChatId
-			result.WeChatId = wechatId[:(len(*seekHouse.WeChatId)-2)] + "**"
-		}
+		// if seekHouse.WeChatId != nil {
+		// 	wechatId := *seekHouse.WeChatId
+		// 	result.WeChatId = wechatId[:(len(*seekHouse.WeChatId)-2)] + "**"
+		// }
 
 		//获取文件下载地址
 		var download imageGetList
@@ -556,6 +601,18 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 
 		//小区
 		result.Community = seekHouse.Community
+
+		//户型
+		if seekHouse.HouseType != nil {
+			var houseType dictionaryDetailGet
+			houseType.Id = *seekHouse.HouseType
+			result.HouseType, _, _ = houseType.Get()
+		}
+
+		//建筑面积
+		if seekHouse.BuildingArea != nil {
+			result.BuildingArea = *seekHouse.BuildingArea
+		}
 
 		results = append(results, result)
 	}

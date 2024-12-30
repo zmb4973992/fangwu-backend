@@ -27,7 +27,7 @@ var rawDictionaryDetails = []dictionaryDetailFormat{
 		DictionaryDetailNames: []string{"一室", "二室", "三室", "四室及以上"},
 	}, {
 		DictionaryTypeName:    "租赁类型",
-		DictionaryDetailNames: []string{"整租", "合租", "转租"},
+		DictionaryDetailNames: []string{"整租", "合租", "整租/合租均可", "转租"},
 	}, {
 		DictionaryTypeName:    "性别限制",
 		DictionaryDetailNames: []string{"男女不限", "限男生", "限女生"},
