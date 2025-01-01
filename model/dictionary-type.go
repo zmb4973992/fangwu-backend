@@ -73,6 +73,13 @@ var rawDictionaryTypes = []DictionaryType{
 		Status:  BoolToPointer(true),
 		Remarks: StringToPointer("系统消息、用户消息、评论等"),
 	},
+	{
+		//for_rent表的字典类型
+		Name:    "朝向",
+		Sort:    IntToPointer(9),
+		Status:  BoolToPointer(true),
+		Remarks: StringToPointer("东、南、西、北、东南、东北、西南、西北、南北、东西等"),
+	},
 }
 
 func initDictionaryType() {

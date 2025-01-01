@@ -31,8 +31,7 @@ type SeekHouseCreate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
-	HouseType         int64   `json:"house_type,omitempty"`    //户型，如一室、二室等
-	BuildingArea      int     `json:"building_area,omitempty"` //建筑面积
+	Area              int     `json:"area,omitempty"`
 }
 
 type SeekHouseUpdate struct {
@@ -51,8 +50,7 @@ type SeekHouseUpdate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
-	HouseType         int64   `json:"house_type,omitempty"`    //户型，如一室、二室等
-	BuildingArea      int     `json:"building_area,omitempty"` //建筑面积
+	Area              int     `json:"area,omitempty"`
 }
 
 type SeekHouseDelete struct {
@@ -69,7 +67,6 @@ type SeekHouseGetList struct {
 	Ids               []int64 `json:"-"`
 	Keyword           string  `json:"keyword,omitempty"`
 	Community         string  `json:"community,omitempty"`
-	HouseType         int64   `json:"house_type,omitempty"` //户型，如一室、二室等
 }
 
 type SeekHouseResult struct {
@@ -90,8 +87,7 @@ type SeekHouseResult struct {
 	Level3AdminDiv    *AdministrativeDivisionResult `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    *AdministrativeDivisionResult `json:"level_4_admin_div,omitempty"`
 	Community         string                        `json:"community,omitempty"`
-	HouseType         *DictionaryDetailResult       `json:"house_type,omitempty"`    //户型，如一室、二室等
-	BuildingArea      int                           `json:"building_area,omitempty"` //建筑面积
+	Area              int                           `json:"area,omitempty"`
 }
 
 func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *util.ErrDetail) {
@@ -164,16 +160,9 @@ func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *u
 	//小区
 	tmpRes.Community = seekHouse.Community
 
-	//户型
-	if seekHouse.HouseType != nil {
-		var houseType dictionaryDetailGet
-		houseType.Id = *seekHouse.HouseType
-		tmpRes.HouseType, _, _ = houseType.Get()
-	}
-
 	//建筑面积
-	if seekHouse.BuildingArea != nil {
-		tmpRes.BuildingArea = *seekHouse.BuildingArea
+	if seekHouse.Area != nil {
+		tmpRes.Area = *seekHouse.Area
 	}
 
 	return &tmpRes, util.Success, nil
@@ -264,14 +253,9 @@ func (s *SeekHouseCreate) Create() (result *SeekHouseResult, resCode int, errDet
 	//小区
 	seekHouse.Community = s.Community
 
-	//户型
-	if s.HouseType > 0 {
-		seekHouse.HouseType = &s.HouseType
-	}
-
 	//建筑面积
-	if s.BuildingArea > 0 {
-		seekHouse.BuildingArea = &s.BuildingArea
+	if s.Area > 0 {
+		seekHouse.Area = &s.Area
 	}
 
 	err := tx.Create(&seekHouse).Error
@@ -383,14 +367,9 @@ func (s *SeekHouseUpdate) Update() (result *SeekHouseResult, resCode int, errDet
 		seekHouse["community"] = s.Community
 	}
 
-	//户型
-	if s.HouseType > 0 {
-		seekHouse["house_type"] = s.HouseType
-	}
-
 	//建筑面积
-	if s.BuildingArea > 0 {
-		seekHouse["building_area"] = s.BuildingArea
+	if s.Area > 0 {
+		seekHouse["area"] = s.Area
 	}
 
 	err := tx.Model(&model.SeekHouse{}).
@@ -485,9 +464,6 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 	}
 	if s.Community != "" {
 		db = db.Where("community LIKE ?", "%"+s.Community+"%")
-	}
-	if s.HouseType > 0 {
-		db = db.Where("house_type = ?", s.HouseType)
 	}
 
 	// count
@@ -602,16 +578,9 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 		//小区
 		result.Community = seekHouse.Community
 
-		//户型
-		if seekHouse.HouseType != nil {
-			var houseType dictionaryDetailGet
-			houseType.Id = *seekHouse.HouseType
-			result.HouseType, _, _ = houseType.Get()
-		}
-
 		//建筑面积
-		if seekHouse.BuildingArea != nil {
-			result.BuildingArea = *seekHouse.BuildingArea
+		if seekHouse.Area != nil {
+			result.Area = *seekHouse.Area
 		}
 
 		results = append(results, result)

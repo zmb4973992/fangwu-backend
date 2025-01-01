@@ -30,8 +30,15 @@ type ForRentCreate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`           //三级行政区划（乡/镇）
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`           //四级行政区划（村/社区）
 	Community         string  `json:"community" binding:"required"`          //小区
-	HouseType         int64   `json:"house_type,omitempty"`                  //户型，如一室、二室等
-	BuildingArea      int     `json:"building_area,omitempty"`               //建筑面积
+	Area              int     `json:"area,omitempty"`                        //面积
+	Bedroom           int     `json:"bedroom,omitempty"`                     //卧室数量
+	LivingRoom        int     `json:"living_room,omitempty"`                 //客厅数量
+	Bathroom          int     `json:"bathroom,omitempty"`                    //卫生间数量
+	Kitchen           int     `json:"kitchen,omitempty"`                     //厨房数量
+	Floor             int     `json:"floor,omitempty"`                       //楼层
+	TotalFloor        int     `json:"total_floor,omitempty"`                 //总楼层
+	Orientation       int64   `json:"orientation,omitempty"`                 //朝向
+	Tenant            int     `json:"tenant,omitempty"`                      //合租户数
 }
 
 type ForRentUpdate struct {
@@ -49,8 +56,15 @@ type ForRentUpdate struct {
 	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`  //三级行政区划（乡/镇）
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`  //四级行政区划（村/社区）
 	Community         string  `json:"community,omitempty"`          //小区
-	HouseType         int64   `json:"house_type,omitempty"`         //户型，如一室、二室等
-	BuildingArea      int     `json:"building_area,omitempty"`      //建筑面积
+	Area              int     `json:"area,omitempty"`               //面积
+	Bedroom           int     `json:"bedroom,omitempty"`            //卧室数量
+	LivingRoom        int     `json:"living_room,omitempty"`        //客厅数量
+	Bathroom          int     `json:"bathroom,omitempty"`           //卫生间数量
+	Kitchen           int     `json:"kitchen,omitempty"`            //厨房数量
+	Floor             int     `json:"floor,omitempty"`              //楼层
+	TotalFloor        int     `json:"total_floor,omitempty"`        //总楼层
+	Orientation       int64   `json:"orientation,omitempty"`        //朝向
+	Tenant            int     `json:"tenant,omitempty"`             //合租户数
 }
 
 type ForRentDelete struct {
@@ -68,7 +82,6 @@ type ForRentGetList struct {
 	Ids                []int64 `json:"-"`                              //id列表
 	Keyword            string  `json:"keyword,omitempty"`              //关键字
 	Community          string  `json:"community,omitempty"`            //小区
-	HouseType          int64   `json:"house_type,omitempty"`           //户型，如一室、二室等
 }
 
 type ForRentResult struct {
@@ -87,9 +100,17 @@ type ForRentResult struct {
 	Level2AdminDiv    *AdministrativeDivisionResult `json:"level_2_admin_div,omitempty"`
 	Level3AdminDiv    *AdministrativeDivisionResult `json:"level_3_admin_div,omitempty"`
 	Level4AdminDiv    *AdministrativeDivisionResult `json:"level_4_admin_div,omitempty"`
-	Community         string                        `json:"community,omitempty"`     //小区
-	HouseType         *DictionaryDetailResult       `json:"house_type,omitempty"`    //户型，如一室、二室等
-	BuildingArea      int                           `json:"building_area,omitempty"` //建筑面积
+	Community         string                        `json:"community,omitempty"`   //小区
+	Area              int                           `json:"area,omitempty"`        //面积
+	Bedroom           int                           `json:"bedroom,omitempty"`     //卧室数量
+	LivingRoom        int                           `json:"living_room,omitempty"` //客厅数量
+	Bathroom          int                           `json:"bathroom,omitempty"`    //卫生间数量
+	Kitchen           int                           `json:"kitchen,omitempty"`     //厨房数量
+	Floor             int                           `json:"floor,omitempty"`       //楼层
+	TotalFloor        int                           `json:"total_floor,omitempty"` //总楼层
+	Orientation       *DictionaryDetailResult       `json:"orientation,omitempty"` //朝向
+	Tenant            int                           `json:"tenant,omitempty"`      //合租户数
+
 }
 
 func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
@@ -152,16 +173,43 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 	//小区
 	tmpRes.Community = forRent.Community
 
-	//户型
-	if forRent.HouseType != nil {
-		var houseType dictionaryDetailGet
-		houseType.Id = *forRent.HouseType
-		tmpRes.HouseType, _, _ = houseType.Get()
+	//建筑面积
+	if forRent.Area != nil {
+		tmpRes.Area = *forRent.Area
 	}
 
-	//建筑面积
-	if forRent.BuildingArea != nil {
-		tmpRes.BuildingArea = *forRent.BuildingArea
+	//户型
+	if forRent.Bedroom != nil {
+		tmpRes.Bedroom = *forRent.Bedroom
+	}
+	if forRent.LivingRoom != nil {
+		tmpRes.LivingRoom = *forRent.LivingRoom
+	}
+	if forRent.Bathroom != nil {
+		tmpRes.Bathroom = *forRent.Bathroom
+	}
+	if forRent.Kitchen != nil {
+		tmpRes.Kitchen = *forRent.Kitchen
+	}
+
+	//楼层
+	if forRent.Floor != nil {
+		tmpRes.Floor = *forRent.Floor
+	}
+	if forRent.TotalFloor != nil {
+		tmpRes.TotalFloor = *forRent.TotalFloor
+	}
+
+	//朝向
+	if forRent.Orientation != nil {
+		var orientation dictionaryDetailGet
+		orientation.Id = *forRent.Orientation
+		tmpRes.Orientation, _, _ = orientation.Get()
+	}
+
+	//合租户数
+	if forRent.Tenant != nil {
+		tmpRes.Tenant = *forRent.Tenant
 	}
 
 	return &tmpRes, util.Success, nil
@@ -183,8 +231,8 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 	if forRent.MobilePhone != nil {
 		tmpRes.MobilePhone = *forRent.MobilePhone
 	}
-	if forRent.WeChatId != nil {
-		tmpRes.WeChatId = *forRent.WeChatId
+	if forRent.WechatId != nil {
+		tmpRes.WeChatId = *forRent.WechatId
 	}
 
 	return &tmpRes, util.Success, nil
@@ -220,7 +268,7 @@ func (f *ForRentCreate) Create() (result *ForRentResult, resCode int, errDetail 
 	}
 
 	if f.WeChatId != "" {
-		forRent.WeChatId = model.StringToPointer(f.WeChatId)
+		forRent.WechatId = model.StringToPointer(f.WeChatId)
 		var contactInfoBlacklist ContactBlackListVerify
 		contactInfoBlacklist.Type = "wechat_id"
 		contactInfoBlacklist.Value = f.WeChatId
@@ -252,14 +300,41 @@ func (f *ForRentCreate) Create() (result *ForRentResult, resCode int, errDetail 
 	//小区
 	forRent.Community = f.Community
 
-	//户型
-	if f.HouseType > 0 {
-		forRent.HouseType = &f.HouseType
+	//建筑面积
+	if f.Area > 0 {
+		forRent.Area = &f.Area
 	}
 
-	//建筑面积
-	if f.BuildingArea > 0 {
-		forRent.BuildingArea = &f.BuildingArea
+	//户型
+	if f.Bedroom > 0 {
+		forRent.Bedroom = &f.Bedroom
+	}
+	if f.LivingRoom > 0 {
+		forRent.LivingRoom = &f.LivingRoom
+	}
+	if f.Bathroom > 0 {
+		forRent.Bathroom = &f.Bathroom
+	}
+	if f.Kitchen > 0 {
+		forRent.Kitchen = &f.Kitchen
+	}
+
+	//楼层
+	if f.Floor > 0 {
+		forRent.Floor = &f.Floor
+	}
+	if f.TotalFloor > 0 {
+		forRent.TotalFloor = &f.TotalFloor
+	}
+
+	//朝向
+	if f.Orientation > 0 {
+		forRent.Orientation = &f.Orientation
+	}
+
+	//合租户数
+	if f.Tenant > 0 {
+		forRent.Tenant = &f.Tenant
 	}
 
 	err := tx.Create(&forRent).Error
@@ -367,14 +442,41 @@ func (f *ForRentUpdate) Update() (result *ForRentResult, resCode int, errDetail 
 		forRent["community"] = f.Community
 	}
 
-	//户型
-	if f.HouseType > 0 {
-		forRent["house_type"] = f.HouseType
+	//建筑面积
+	if f.Area > 0 {
+		forRent["area"] = f.Area
 	}
 
-	//建筑面积
-	if f.BuildingArea > 0 {
-		forRent["building_area"] = f.BuildingArea
+	//户型
+	if f.Bedroom > 0 {
+		forRent["bedroom"] = f.Bedroom
+	}
+	if f.LivingRoom > 0 {
+		forRent["living_room"] = f.LivingRoom
+	}
+	if f.Bathroom > 0 {
+		forRent["bathroom"] = f.Bathroom
+	}
+	if f.Kitchen > 0 {
+		forRent["kitchen"] = f.Kitchen
+	}
+
+	//楼层
+	if f.Floor > 0 {
+		forRent["floor"] = f.Floor
+	}
+	if f.TotalFloor > 0 {
+		forRent["total_floor"] = f.TotalFloor
+	}
+
+	//朝向
+	if f.Orientation > 0 {
+		forRent["orientation"] = f.Orientation
+	}
+
+	//合租户数
+	if f.Tenant > 0 {
+		forRent["tenant"] = f.Tenant
 	}
 
 	err := tx.Model(&model.ForRent{}).
@@ -471,9 +573,6 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 	if f.Community != "" {
 		db = db.Where("community LIKE ?", "%"+f.Community+"%")
 	}
-	if f.HouseType > 0 {
-		db = db.Where("house_type = ?", f.HouseType)
-	}
 
 	// count
 	var count int64
@@ -540,16 +639,6 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 		genderRestriction.Id = forRent.GenderRestriction
 		result.GenderRestriction, _, _ = genderRestriction.Get()
 
-		// if forRent.MobilePhone != nil {
-		// 	moblelePhone := *forRent.MobilePhone
-		// 	result.MobilePhone = moblelePhone[:(len(*forRent.MobilePhone)-2)] + "**"
-		// }
-
-		// if forRent.WeChatId != nil {
-		// 	wechatId := *forRent.WeChatId
-		// 	result.WeChatId = wechatId[:(len(*forRent.WeChatId)-2)] + "**"
-		// }
-
 		//获取文件下载地址
 		var download imageGetList
 		download.businessType = forRent.TableName()
@@ -580,16 +669,38 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 		//小区
 		result.Community = forRent.Community
 
-		//户型
-		if forRent.HouseType != nil {
-			var houseType dictionaryDetailGet
-			houseType.Id = *forRent.HouseType
-			result.HouseType, _, _ = houseType.Get()
+		//建筑面积
+		if forRent.Area != nil {
+			result.Area = *forRent.Area
 		}
 
-		//建筑面积
-		if forRent.BuildingArea != nil {
-			result.BuildingArea = *forRent.BuildingArea
+		//户型
+		if forRent.Bedroom != nil {
+			result.Bedroom = *forRent.Bedroom
+		}
+		if forRent.LivingRoom != nil {
+			result.LivingRoom = *forRent.LivingRoom
+		}
+		if forRent.Bathroom != nil {
+			result.Bathroom = *forRent.Bathroom
+		}
+		if forRent.Kitchen != nil {
+			result.Kitchen = *forRent.Kitchen
+		}
+
+		//楼层
+		if forRent.Floor != nil {
+			result.Floor = *forRent.Floor
+		}
+		if forRent.TotalFloor != nil {
+			result.TotalFloor = *forRent.TotalFloor
+		}
+
+		//朝向
+		if forRent.Orientation != nil {
+			var orientation dictionaryDetailGet
+			orientation.Id = *forRent.Orientation
+			result.Orientation, _, _ = orientation.Get()
 		}
 
 		results = append(results, result)

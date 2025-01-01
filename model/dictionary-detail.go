@@ -46,6 +46,10 @@ var rawDictionaryDetails = []dictionaryDetailFormat{
 		DictionaryTypeName:    "消息类型",
 		DictionaryDetailNames: []string{"系统", "用户", "评论"},
 	},
+	{
+		DictionaryTypeName:    "朝向",
+		DictionaryDetailNames: []string{"东", "南", "西", "北", "东南", "东北", "西南", "西北", "南北", "东西"},
+	},
 }
 
 func initDictionaryDetail() {
