@@ -90,7 +90,7 @@ func (u *Upload) BatchCreate(c *gin.Context) {
 	}
 
 	var result []*service.UploadResult
-	param.FileHeader = form.File["files"]
+	param.FileHeader = form.File["file"]
 	result, resCode, errDetail = param.BatchCreate()
 
 	c.JSON(

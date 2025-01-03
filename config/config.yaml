@@ -49,7 +49,7 @@ upload:
       windows: "d:/thumbnails"
       linux: "/fangwu8/thumbnails"
   #上传文件的最大尺寸(MB)
-  max-size: "50"
+  max-size: "10"
   #允许的文件后缀，不填的话默认为所有类型
   allowed-exts: [".jpg",".jpeg",".png",".bmp"]
   
