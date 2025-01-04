@@ -17,10 +17,11 @@ func (f *forRent) appendForRentRouterTo(param *gin.RouterGroup) {
 
 	publicRouter := forRentRouter.Group("")
 	publicRouter.POST("/list", forRentController.GetList)
+	publicRouter.GET("/:id", forRentController.Get)
 
 	privateRouter := forRentRouter.Group("")
 	privateRouter.Use(middleware.JWT())
-	privateRouter.GET("/:id", forRentController.Get)
+	privateRouter.GET("/:id/contact", forRentController.GetContact)
 	privateRouter.POST("", forRentController.Create)
 	privateRouter.PATCH("", forRentController.Update)
 	privateRouter.DELETE("", forRentController.Delete)

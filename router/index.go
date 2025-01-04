@@ -28,7 +28,6 @@ type routerEnhancer struct {
 	notification
 	captcha
 	favorite
-	viewContact
 	administrativeDivision
 }
 
@@ -71,7 +70,6 @@ func LoadEngine() *gin.Engine {
 	routerEnhancer.appendNotificationRouterTo(defaultGroup)
 	routerEnhancer.appendCaptchaRouterTo(defaultGroup)
 	routerEnhancer.appendFavoriteRouterTo(defaultGroup)
-	routerEnhancer.appendViewContactRouterTo(defaultGroup)
 	routerEnhancer.appendAdministrativeDivisionRouterTo(defaultGroup)
 
 	//引擎配置完成后，返回

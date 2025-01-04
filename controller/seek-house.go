@@ -33,6 +33,25 @@ func (s *SeekHouse) Get(c *gin.Context) {
 	)
 }
 
+func (s *SeekHouse) GetContact(c *gin.Context) {
+	var param service.SeekHouseGetContact
+	var err error
+	param.Id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(
+			http.StatusOK,
+			response.GenerateSingle(nil, util.ErrorInvalidUriParams, util.GetErrDetail(err)),
+		)
+		return
+	}
+
+	result, resCode, errDetail := param.GetContact()
+	c.JSON(
+		http.StatusOK,
+		response.GenerateSingle(result, resCode, errDetail),
+	)
+}
+
 func (s *SeekHouse) Create(c *gin.Context) {
 	var param service.SeekHouseCreate
 	err := c.ShouldBindJSON(&param)

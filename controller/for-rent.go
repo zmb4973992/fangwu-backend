@@ -33,6 +33,25 @@ func (f *ForRent) Get(c *gin.Context) {
 	)
 }
 
+func (f *ForRent) GetContact(c *gin.Context) {
+	var param service.ForRentGetContact
+	var err error
+	param.Id, err = strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(
+			http.StatusOK,
+			response.GenerateSingle(nil, util.ErrorInvalidUriParams, util.GetErrDetail(err)),
+		)
+		return
+	}
+
+	result, resCode, errDetail := param.GetContact()
+	c.JSON(
+		http.StatusOK,
+		response.GenerateSingle(result, resCode, errDetail),
+	)
+}
+
 func (f *ForRent) Create(c *gin.Context) {
 	var param service.ForRentCreate
 	err := c.ShouldBindJSON(&param)

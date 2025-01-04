@@ -17,10 +17,11 @@ func (s *seekHouse) appendSeekHouseRouterTo(param *gin.RouterGroup) {
 
 	publicRouter := seekHouseRouter.Group("")
 	publicRouter.POST("/list", seekHouseController.GetList)
+	publicRouter.GET("/:id", seekHouseController.Get)
 
 	privateRouter := seekHouseRouter.Group("")
 	privateRouter.Use(middleware.JWT())
-	privateRouter.GET("/:id", seekHouseController.Get)
+	privateRouter.GET("/:id/contact", seekHouseController.GetContact)
 	privateRouter.POST("", seekHouseController.Create)
 	privateRouter.PATCH("", seekHouseController.Update)
 	privateRouter.DELETE("", seekHouseController.Delete)
