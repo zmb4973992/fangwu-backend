@@ -35,5 +35,5 @@ func (d *Download) Get(c *gin.Context) {
 		return
 	}
 
-	c.FileAttachment(result.DownloadPath, result.FileName)
+	c.FileAttachment(result.Url, result.Name)
 }

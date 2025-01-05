@@ -21,8 +21,9 @@ type imageGetList struct {
 }
 
 type ImageResult struct {
-	DownloadPath string `json:"download_path,omitempty"`
-	FileName     string `json:"file_name,omitempty"`
+	Id   int64  `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+	Url  string `json:"url,omitempty"`
 }
 
 func (d *ImageGet) Get() (result *ImageResult, resCode int, errDetail *util.ErrDetail) {
@@ -45,7 +46,7 @@ func (d *ImageGet) Get() (result *ImageResult, resCode int, errDetail *util.ErrD
 		return nil, util.ErrorFileNotFound, util.GetErrDetail(err)
 	}
 
-	return &ImageResult{DownloadPath: filePath, FileName: record.Name},
+	return &ImageResult{Url: filePath, Name: record.Name},
 		util.Success, nil
 }
 
@@ -78,7 +79,9 @@ func (d *imageGetList) GetList() (results []ImageResult, paging *response.Paging
 			continue
 		}
 
-		result.DownloadPath = "http://" + global.Config.Download.PublicIp +
+		result.Id = file.Id
+		result.Name = file.Name
+		result.Url = "http://" + global.Config.Download.PublicIp +
 			":" + strconv.Itoa(global.Config.Access.Port) +
 			"/image/" + strconv.FormatInt(file.Id, 10) +
 			filepath.Ext(file.Name)

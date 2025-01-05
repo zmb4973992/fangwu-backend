@@ -3,7 +3,10 @@ package model
 type SeekHouse struct {
 	Base
 	Delete
-	AdminDiv
+	Level1AdminDiv    *int    `json:"level_1_admin_div" gorm:"index;column:level_1_admin_div;"`
+	Level2AdminDiv    *int    `json:"level_2_admin_div" gorm:"index;column:level_2_admin_div;"`
+	Level3AdminDiv    *int    `json:"level_3_admin_div" gorm:"index;column:level_3_admin_div;"`
+	Level4AdminDiv    *int    `json:"level_4_admin_div" gorm:"index;column:level_4_admin_div;"`
 	MaxBudget         float64 `json:"max_budget" gorm:"index;"`                 //预算上限
 	MinBudget         float64 `json:"min_budget" gorm:"index;"`                 //预算下限
 	RentType          int64   `json:"rent_type" gorm:"index;"`                  //租赁类型，如整租、合租等
