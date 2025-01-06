@@ -19,6 +19,7 @@ type AdminDivResult struct {
 	Code         int    `json:"code,omitempty"`
 	Name         string `json:"name,omitempty"`
 	PinyinPrefix string `json:"pinyin_prefix,omitempty"`
+	ParentCode   int    `json:"parent_code,omitempty"`
 }
 
 func (a *adminDivGet) Get() (result *AdminDivResult, resCode int, errDetail *util.ErrDetail) {
@@ -32,6 +33,8 @@ func (a *adminDivGet) Get() (result *AdminDivResult, resCode int, errDetail *uti
 	var tmpRes AdminDivResult
 	tmpRes.Code = adminDiv.Code
 	tmpRes.Name = adminDiv.Name
+	tmpRes.PinyinPrefix = adminDiv.PinyinPrefix
+	tmpRes.ParentCode = adminDiv.ParentCode
 
 	return &tmpRes, util.Success, nil
 }
@@ -48,6 +51,7 @@ func (a *AdminDivGetList) GetList() (results []AdminDivResult, paging *response.
 		var result AdminDivResult
 		result.Code = v.Code
 		result.Name = v.Name
+		result.ParentCode = v.ParentCode
 		result.PinyinPrefix = v.PinyinPrefix
 		results = append(results, result)
 	}
