@@ -149,6 +149,19 @@ func (f *ForRent) GetList(c *gin.Context) {
 		return
 	}
 
+	//如果传入了CreatedByMyself参数，则只查询自己创建的房源信息
+	if param.CreatedByMyself != nil && *param.CreatedByMyself == true {
+		userId, resCode, errDetail := util.GetUserId(c)
+		if resCode != util.Success {
+			c.JSON(
+				http.StatusOK,
+				response.GenerateSingle(nil, resCode, errDetail),
+			)
+			return
+		}
+		param.Creator = userId
+	}
+
 	result, paging, resCode, errDetail := param.GetList()
 	c.JSON(
 		http.StatusOK,

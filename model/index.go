@@ -29,13 +29,6 @@ type Delete struct {
 	DeletedAt *time.Time `json:"deleted_at" gorm:"type:timestamp(3)"`
 }
 
-type AdminDiv struct {
-	Level1AdminDiv *int `json:"level_1_admin_div" gorm:"index;column:level_1_admin_div;"`
-	Level2AdminDiv *int `json:"level_2_admin_div" gorm:"index;column:level_2_admin_div;"`
-	Level3AdminDiv *int `json:"level_3_admin_div" gorm:"index;column:level_3_admin_div;"`
-	Level4AdminDiv *int `json:"level_4_admin_div" gorm:"index;column:level_4_admin_div;"`
-}
-
 type Archive struct {
 	ArchiveId     int64      `json:"archive_id"`
 	ArchivedBy    *int64     `json:"archived_by" gorm:"index;"`
@@ -71,28 +64,28 @@ func ConnectToPgsql() {
 	// Set Connection Max Lifetime 设置了连接可复用的最大时间
 	sqlDB.SetConnMaxLifetime(time.Hour)
 	err = global.Db.AutoMigrate(
-		&User{},                   //用户
-		&ArchivedUser{},           //已归档用户
-		&RequestLog{},             //请求日志
-		&File{},                   //文件
-		&AdministrativeDivision{}, //行政区划
-		&DictionaryType{},         //字典类型
-		&DictionaryDetail{},       //字典详情
-		&ForRent{},                //出租信息
-		&ArchivedForRent{},        //已归档出租信息
-		&Comment{},                //评论
-		&Favorite{},               //收藏
-		&SeekHouse{},              //求租信息
-		&ArchivedSeekHouse{},      //已归档求租信息
-		&ContactBlacklist{},       //联系方式黑名单
-		&Complaint{},              //投诉
-		&ArchivedComment{},        //已归档评论
-		&UserBlacklist{},          //用户黑名单
-		&Notification{},           //消息
-		&Favorite{},               //收藏
-		&ArchivedComplaint{},      //已归档投诉
-		&Footprint{},              //足迹
-		&ViewContact{},            //查看联系方式
+		&User{},              //用户
+		&ArchivedUser{},      //已归档用户
+		&RequestLog{},        //请求日志
+		&File{},              //文件
+		&AdminDiv{},          //行政区划
+		&DictionaryType{},    //字典类型
+		&DictionaryDetail{},  //字典详情
+		&ForRent{},           //出租信息
+		&ArchivedForRent{},   //已归档出租信息
+		&Comment{},           //评论
+		&Favorite{},          //收藏
+		&SeekHouse{},         //求租信息
+		&ArchivedSeekHouse{}, //已归档求租信息
+		&ContactBlacklist{},  //联系方式黑名单
+		&Complaint{},         //投诉
+		&ArchivedComment{},   //已归档评论
+		&UserBlacklist{},     //用户黑名单
+		&Notification{},      //消息
+		&Favorite{},          //收藏
+		&ArchivedComplaint{}, //已归档投诉
+		&Footprint{},         //足迹
+		&ViewContact{},       //查看联系方式
 	)
 	if err != nil {
 		global.SugaredLogger.Panicln(err)
@@ -129,5 +122,5 @@ func ConnectToRedis() {
 }
 
 func executeSql() {
-	executeSqlForAdministrativeDivisions()
+	executeSqlForAdminDiv()
 }

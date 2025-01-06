@@ -10,7 +10,7 @@ import (
 type administrativeDivision struct{}
 
 func (a *administrativeDivision) appendAdministrativeDivisionRouterTo(param *gin.RouterGroup) {
-	var administrativeDivisionController controller.AdministrativeDivision
+	var administrativeDivisionController controller.AdminDiv
 
 	administrativeDivisionRouter := param.Group("/administrative-division")
 	administrativeDivisionRouter.Use(middleware.RateLimit("ip", 1, "per_second"))

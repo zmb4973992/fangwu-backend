@@ -9,9 +9,9 @@ import (
 )
 
 type UserLogin struct {
+	CaptchaVerify
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
-	CaptchaVerify
 }
 
 type UserGet struct {
@@ -103,6 +103,8 @@ func (u *UserGet) Get() (result *UserResult, resCode int, errDetail *util.ErrDet
 	}
 
 	var tmpRes UserResult
+	tmpRes.Id = user.Id
+
 	if user.MobilePhone != nil {
 		tmpRes.MobilePhone = *user.MobilePhone
 	}
@@ -167,7 +169,7 @@ func (u *UserCreate) Create() (result *UserResult, resCode int, errDetail *util.
 	userLogin.Password = u.Password
 	tmpRes, resCode, errDetail := userLogin.Login()
 	if resCode != util.Success {
-		return nil, util.ErrorFailToCreateUser, util.GetErrDetail(err)
+		return nil, util.ErrorFailToCreateUser, errDetail
 	}
 
 	return &UserResult{AccessToken: tmpRes.AccessToken}, util.Success, nil

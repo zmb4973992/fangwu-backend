@@ -60,6 +60,8 @@ type SeekHouseDelete struct {
 
 type SeekHouseGetList struct {
 	list
+	Creator           int64   `json:"-"`
+	CreatedByMyself   *bool   `json:"created_by_myself,omitempty"`
 	RentType          int64   `json:"rent_type,omitempty"`
 	MaxBudget         float64 `json:"max_budget,omitempty"`
 	MinBudget         float64 `json:"min_budget,omitempty"`
@@ -67,27 +69,30 @@ type SeekHouseGetList struct {
 	Ids               []int64 `json:"-"`
 	Keyword           string  `json:"keyword,omitempty"`
 	Community         string  `json:"community,omitempty"`
+	Level2AdminDiv    int     `json:"level_2_admin_div,omitempty"`
+	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
+	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 }
 
 type SeekHouseResult struct {
-	Creator           int64                         `json:"creator,omitempty"`
-	LastModifier      int64                         `json:"last_modifier,omitempty"`
-	IsDeleted         bool                          `json:"is_deleted,omitempty"`
-	Id                int64                         `json:"id,omitempty"`
-	RentType          *DictionaryDetailResult       `json:"rent_type,omitempty"`
-	MaxBudget         float64                       `json:"max_budget,omitempty"`
-	MinBudget         float64                       `json:"min_budget,omitempty"`
-	Description       string                        `json:"description,omitempty"`
-	GenderRestriction *DictionaryDetailResult       `json:"gender_restriction,omitempty"`
-	MobilePhone       string                        `json:"mobile_phone,omitempty"`
-	WeChatId          string                        `json:"wechat_id,omitempty"`
-	Files             []ImageResult                 `json:"files,omitempty"`
-	Level1AdminDiv    *AdministrativeDivisionResult `json:"level_1_admin_div,omitempty"`
-	Level2AdminDiv    *AdministrativeDivisionResult `json:"level_2_admin_div,omitempty"`
-	Level3AdminDiv    *AdministrativeDivisionResult `json:"level_3_admin_div,omitempty"`
-	Level4AdminDiv    *AdministrativeDivisionResult `json:"level_4_admin_div,omitempty"`
-	Community         string                        `json:"community,omitempty"`
-	Area              int                           `json:"area,omitempty"`
+	Creator           int64                   `json:"creator,omitempty"`
+	LastModifier      int64                   `json:"last_modifier,omitempty"`
+	IsDeleted         bool                    `json:"is_deleted,omitempty"`
+	Id                int64                   `json:"id,omitempty"`
+	RentType          *DictionaryDetailResult `json:"rent_type,omitempty"`
+	MaxBudget         float64                 `json:"max_budget,omitempty"`
+	MinBudget         float64                 `json:"min_budget,omitempty"`
+	Description       string                  `json:"description,omitempty"`
+	GenderRestriction *DictionaryDetailResult `json:"gender_restriction,omitempty"`
+	MobilePhone       string                  `json:"mobile_phone,omitempty"`
+	WeChatId          string                  `json:"wechat_id,omitempty"`
+	Files             []ImageResult           `json:"files,omitempty"`
+	Level1AdminDiv    *AdminDivResult         `json:"level_1_admin_div,omitempty"`
+	Level2AdminDiv    *AdminDivResult         `json:"level_2_admin_div,omitempty"`
+	Level3AdminDiv    *AdminDivResult         `json:"level_3_admin_div,omitempty"`
+	Level4AdminDiv    *AdminDivResult         `json:"level_4_admin_div,omitempty"`
+	Community         string                  `json:"community,omitempty"`
+	Area              int                     `json:"area,omitempty"`
 }
 
 func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *util.ErrDetail) {
@@ -129,7 +134,7 @@ func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *u
 	genderRestriction.Id = seekHouse.GenderRestriction
 	tmpRes.GenderRestriction, _, _ = genderRestriction.Get()
 
-	//获取文件下载地址
+	//获取文件信息
 	var download imageGetList
 	download.businessType = seekHouse.TableName()
 	download.businessId = seekHouse.Id
@@ -137,22 +142,22 @@ func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *u
 
 	//获取行政区划
 	if seekHouse.Level1AdminDiv != nil {
-		var level1AdminDiv administrativeDivisionGet
+		var level1AdminDiv adminDivGet
 		level1AdminDiv.Code = *seekHouse.Level1AdminDiv
 		tmpRes.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 	}
 	if seekHouse.Level2AdminDiv != nil {
-		var level2AdminDiv administrativeDivisionGet
+		var level2AdminDiv adminDivGet
 		level2AdminDiv.Code = *seekHouse.Level2AdminDiv
 		tmpRes.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 	}
 	if seekHouse.Level3AdminDiv != nil {
-		var level3AdminDiv administrativeDivisionGet
+		var level3AdminDiv adminDivGet
 		level3AdminDiv.Code = *seekHouse.Level3AdminDiv
 		tmpRes.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 	}
 	if seekHouse.Level4AdminDiv != nil {
-		var level4AdminDiv administrativeDivisionGet
+		var level4AdminDiv adminDivGet
 		level4AdminDiv.Code = *seekHouse.Level4AdminDiv
 		tmpRes.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 	}
@@ -442,6 +447,9 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 	// where
 	db = db.Where("is_deleted = ?", false)
 
+	if s.Creator > 0 {
+		db = db.Where("creator = ?", s.Creator)
+	}
 	if s.RentType > 0 {
 		db = db.Where("rent_type = ?", s.RentType)
 	}
@@ -464,6 +472,15 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 	}
 	if s.Community != "" {
 		db = db.Where("community LIKE ?", "%"+s.Community+"%")
+	}
+	if s.Level2AdminDiv > 0 {
+		db = db.Where("level_2_admin_div = ?", s.Level2AdminDiv)
+	}
+	if s.Level3AdminDiv > 0 {
+		db = db.Where("level_3_admin_div = ?", s.Level3AdminDiv)
+	}
+	if s.Level4AdminDiv > 0 {
+		db = db.Where("level_4_admin_div = ?", s.Level4AdminDiv)
 	}
 
 	// count
@@ -555,22 +572,22 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 
 		//获取行政区划
 		if seekHouse.Level1AdminDiv != nil {
-			var level1AdminDiv administrativeDivisionGet
+			var level1AdminDiv adminDivGet
 			level1AdminDiv.Code = *seekHouse.Level1AdminDiv
 			result.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 		}
 		if seekHouse.Level2AdminDiv != nil {
-			var level2AdminDiv administrativeDivisionGet
+			var level2AdminDiv adminDivGet
 			level2AdminDiv.Code = *seekHouse.Level2AdminDiv
 			result.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 		}
 		if seekHouse.Level3AdminDiv != nil {
-			var level3AdminDiv administrativeDivisionGet
+			var level3AdminDiv adminDivGet
 			level3AdminDiv.Code = *seekHouse.Level3AdminDiv
 			result.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 		}
 		if seekHouse.Level4AdminDiv != nil {
-			var level4AdminDiv administrativeDivisionGet
+			var level4AdminDiv adminDivGet
 			level4AdminDiv.Code = *seekHouse.Level4AdminDiv
 			result.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 		}
