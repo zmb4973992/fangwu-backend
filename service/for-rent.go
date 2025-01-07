@@ -161,22 +161,22 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 
 	//获取行政区划
 	if forRent.Level1AdminDiv != nil {
-		var level1AdminDiv adminDivGet
+		var level1AdminDiv adminDivGetByCode
 		level1AdminDiv.Code = *forRent.Level1AdminDiv
 		tmpRes.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 	}
 	if forRent.Level2AdminDiv != nil {
-		var level2AdminDiv adminDivGet
+		var level2AdminDiv adminDivGetByCode
 		level2AdminDiv.Code = *forRent.Level2AdminDiv
 		tmpRes.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 	}
 	if forRent.Level3AdminDiv != nil {
-		var level3AdminDiv adminDivGet
+		var level3AdminDiv adminDivGetByCode
 		level3AdminDiv.Code = *forRent.Level3AdminDiv
 		tmpRes.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 	}
 	if forRent.Level4AdminDiv != nil {
-		var level4AdminDiv adminDivGet
+		var level4AdminDiv adminDivGetByCode
 		level4AdminDiv.Code = *forRent.Level4AdminDiv
 		tmpRes.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 	}
@@ -670,22 +670,22 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 
 		//获取行政区划
 		if forRent.Level1AdminDiv != nil {
-			var adminDiv adminDivGet
+			var adminDiv adminDivGetByCode
 			adminDiv.Code = *forRent.Level1AdminDiv
 			result.Level1AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level2AdminDiv != nil {
-			var adminDiv adminDivGet
+			var adminDiv adminDivGetByCode
 			adminDiv.Code = *forRent.Level2AdminDiv
 			result.Level2AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level3AdminDiv != nil {
-			var adminDiv adminDivGet
+			var adminDiv adminDivGetByCode
 			adminDiv.Code = *forRent.Level3AdminDiv
 			result.Level3AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level4AdminDiv != nil {
-			var adminDiv adminDivGet
+			var adminDiv adminDivGetByCode
 			adminDiv.Code = *forRent.Level4AdminDiv
 			result.Level4AdminDiv, _, _ = adminDiv.Get()
 		}
