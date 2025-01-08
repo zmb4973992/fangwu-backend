@@ -19,19 +19,6 @@ type CaptchaResult struct {
 	Base64String string `json:"base64_string,omitempty"`
 }
 
-func LoadCaptcha() {
-	store := base64Captcha.DefaultMemStore
-	driver := base64Captcha.NewDriverString(
-		global.Config.Captcha.Height,
-		global.Config.Captcha.Width,
-		global.Config.Captcha.NoiseCount,
-		base64Captcha.OptionShowHollowLine,
-		global.Config.Captcha.Length,
-		"123456789abcdefghjkmnprstuvwxyz",
-		nil, nil, nil)
-	global.Captcha = base64Captcha.NewCaptcha(driver, store)
-}
-
 func (c *CaptchaGet) Get() (result *CaptchaResult, resCode int, errDetail *util.ErrDetail) {
 	var tmpRes CaptchaResult
 	id, b64s, _, err := global.Captcha.Generate()

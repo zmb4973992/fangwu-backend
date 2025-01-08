@@ -72,10 +72,10 @@ func (c *CommentCreate) Create() (result *CommentResult, resCode int, errDetail 
 	}
 
 	//获取“消息类型-评论”的字典详情id
-	var param dictionaryDetailGetByName
-	param.DictionaryTypeName = "消息类型"
-	param.DictionaryDetailName = "评论"
-	dictionaryDetail, resCode, errDetail := param.GetByName()
+	var param dictionaryDetailGetByValue
+	param.DictionaryTypeValue = "消息类型"
+	param.DictionaryDetailValue = "评论"
+	dictionaryDetail, resCode, errDetail := param.GetByValue()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -273,8 +273,8 @@ func (c *CommentGetList) GetList() (results []CommentResult, paging *response.Pa
 	var tmpPaging response.Paging
 	tmpPaging.Page = page
 	tmpPaging.PageSize = pageSize
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = util.GetNumberOfPages(int(count), pageSize)
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = util.GetNumberOfPages(int(count), pageSize)
 
 	return results, &tmpPaging, util.Success, nil
 }

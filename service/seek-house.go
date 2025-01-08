@@ -32,6 +32,8 @@ type SeekHouseCreate struct {
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
 	Area              int     `json:"area,omitempty"`
+	Name              string  `json:"name,omitempty"`
+	Gender            int64   `json:"gender,omitempty"`
 }
 
 type SeekHouseUpdate struct {
@@ -51,6 +53,8 @@ type SeekHouseUpdate struct {
 	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
 	Community         string  `json:"community,omitempty"`
 	Area              int     `json:"area,omitempty"`
+	Name              string  `json:"name,omitempty"`
+	Gender            int64   `json:"gender,omitempty"`
 }
 
 type SeekHouseDelete struct {
@@ -93,6 +97,8 @@ type SeekHouseResult struct {
 	Level4AdminDiv    *AdminDivResult         `json:"level_4_admin_div,omitempty"`
 	Community         string                  `json:"community,omitempty"`
 	Area              int                     `json:"area,omitempty"`
+	Name              string                  `json:"name,omitempty"`
+	Gender            *DictionaryDetailResult `json:"gender,omitempty"`
 }
 
 func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *util.ErrDetail) {
@@ -192,6 +198,14 @@ func (s *SeekHouseGetContact) GetContact() (result *SeekHouseResult, resCode int
 	if seekHouse.WeChatId != nil {
 		tmpRes.WeChatId = *seekHouse.WeChatId
 	}
+	if seekHouse.Name != nil {
+		tmpRes.Name = *seekHouse.Name
+	}
+	if seekHouse.Gender != nil {
+		var gender dictionaryDetailGet
+		gender.Id = *seekHouse.Gender
+		tmpRes.Gender, _, _ = gender.Get()
+	}
 
 	return &tmpRes, util.Success, nil
 }
@@ -261,6 +275,16 @@ func (s *SeekHouseCreate) Create() (result *SeekHouseResult, resCode int, errDet
 	//建筑面积
 	if s.Area > 0 {
 		seekHouse.Area = &s.Area
+	}
+
+	//姓名
+	if s.Name != "" {
+		seekHouse.Name = &s.Name
+	}
+
+	//性别
+	if s.Gender > 0 {
+		seekHouse.Gender = &s.Gender
 	}
 
 	err := tx.Create(&seekHouse).Error
@@ -375,6 +399,16 @@ func (s *SeekHouseUpdate) Update() (result *SeekHouseResult, resCode int, errDet
 	//建筑面积
 	if s.Area > 0 {
 		seekHouse["area"] = s.Area
+	}
+
+	//姓名
+	if s.Name != "" {
+		seekHouse["name"] = s.Name
+	}
+
+	//性别
+	if s.Gender > 0 {
+		seekHouse["gender"] = s.Gender
 	}
 
 	err := tx.Model(&model.SeekHouse{}).
@@ -607,8 +641,8 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 	var tmpPaging response.Paging
 	tmpPaging.Page = page
 	tmpPaging.PageSize = pageSize
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = util.GetNumberOfPages(int(count), pageSize)
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = util.GetNumberOfPages(int(count), pageSize)
 
 	return results, &tmpPaging, util.Success, nil
 }

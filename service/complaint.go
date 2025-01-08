@@ -117,10 +117,10 @@ func (c *ComplaintCreate) Create() (result *ComplaintResult, resCode int, errDet
 	complaint.Description = &c.Description
 
 	//获取待处理的字典详情id
-	var param dictionaryDetailGetByName
-	param.DictionaryTypeName = "投诉状态"
-	param.DictionaryDetailName = "未处理"
-	dictionaryDetail, resCode, errDetail := param.GetByName()
+	var param dictionaryDetailGetByValue
+	param.DictionaryTypeValue = "投诉状态"
+	param.DictionaryDetailValue = "未处理"
+	dictionaryDetail, resCode, errDetail := param.GetByValue()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -318,8 +318,8 @@ func (c *ComplaintGetList) GetList() (results []ComplaintResult, paging *respons
 	var tmpPaging response.Paging
 	tmpPaging.Page = page
 	tmpPaging.PageSize = pageSize
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = util.GetNumberOfPages(int(count), pageSize)
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = util.GetNumberOfPages(int(count), pageSize)
 
 	return results, &tmpPaging, util.Success, nil
 }

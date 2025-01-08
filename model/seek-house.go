@@ -16,6 +16,8 @@ type SeekHouse struct {
 	WeChatId          *string `json:"wechat_id" gorm:"column:wechat_id;index;"` //微信id
 	Community         string  `json:"community" gorm:"index;"`                  //小区
 	Area              *int    `json:"area" gorm:"index;"`                       //面积
+	Name              *string `json:"name"`
+	Gender            *int64  `json:"gender" gorm:"index;"`
 }
 
 func (s SeekHouse) TableName() string {

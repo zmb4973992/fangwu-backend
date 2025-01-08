@@ -23,6 +23,8 @@ type ForRent struct {
 	TotalFloor        *int    `json:"total_floor" gorm:"index;"`                //总楼层
 	Orientation       *int64  `json:"orientation" gorm:"index;"`                //朝向
 	Tenant            *int    `json:"tenant" gorm:"index;"`                     //合租户数
+	Name              *string `json:"name"`                                     //姓名
+	Gender            *int64  `json:"gender" gorm:"index;"`                     //性别
 }
 
 func (f ForRent) TableName() string {

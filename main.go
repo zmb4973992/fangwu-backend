@@ -6,7 +6,6 @@ import (
 	"fangwu-backend/middleware"
 	"fangwu-backend/model"
 	"fangwu-backend/router"
-	"fangwu-backend/service"
 	"fangwu-backend/util"
 	"strconv"
 )
@@ -26,7 +25,7 @@ func main() {
 	var file controller.Upload
 	file.InitUploadingPath()
 	//加载验证码
-	service.LoadCaptcha()
+	util.LoadCaptcha()
 	//生成引擎
 	engine := router.LoadEngine()
 	//开启2个协程，用来保存访问记录到数据库

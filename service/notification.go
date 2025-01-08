@@ -175,8 +175,8 @@ func (m *NotificationGetList) GetList() (results []NotificationResult, paging *r
 	var tmpPaging response.Paging
 	tmpPaging.Page = page
 	tmpPaging.PageSize = pageSize
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = util.GetNumberOfPages(int(count), pageSize)
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = util.GetNumberOfPages(int(count), pageSize)
 
 	return results, &tmpPaging, util.Success, nil
 }

@@ -39,6 +39,8 @@ type ForRentCreate struct {
 	TotalFloor        int     `json:"total_floor,omitempty"`                 //总楼层
 	Orientation       int64   `json:"orientation,omitempty"`                 //朝向
 	Tenant            int     `json:"tenant,omitempty"`                      //合租户数
+	Name              string  `json:"name,omitempty"`                        //姓名
+	Gender            int64   `json:"gender,omitempty"`                      //性别
 }
 
 type ForRentUpdate struct {
@@ -65,6 +67,8 @@ type ForRentUpdate struct {
 	TotalFloor        int     `json:"total_floor,omitempty"`        //总楼层
 	Orientation       int64   `json:"orientation,omitempty"`        //朝向
 	Tenant            int     `json:"tenant,omitempty"`             //合租户数
+	Name              string  `json:"name,omitempty"`               //姓名
+	Gender            int64   `json:"gender,omitempty"`             //性别
 }
 
 type ForRentDelete struct {
@@ -115,7 +119,8 @@ type ForRentResult struct {
 	TotalFloor        int                     `json:"total_floor,omitempty"` //总楼层
 	Orientation       *DictionaryDetailResult `json:"orientation,omitempty"` //朝向
 	Tenant            int                     `json:"tenant,omitempty"`      //合租户数
-
+	Name              string                  `json:"name,omitempty"`        //姓名
+	Gender            *DictionaryDetailResult `json:"gender,omitempty"`      //性别
 }
 
 func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
@@ -245,6 +250,16 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 	if forRent.WechatId != nil {
 		tmpRes.WeChatId = *forRent.WechatId
 	}
+	//姓名
+	if forRent.Name != nil {
+		tmpRes.Name = *forRent.Name
+	}
+	//性别
+	if forRent.Gender != nil {
+		var gender dictionaryDetailGet
+		gender.Id = *forRent.Gender
+		tmpRes.Gender, _, _ = gender.Get()
+	}
 
 	return &tmpRes, util.Success, nil
 }
@@ -346,6 +361,16 @@ func (f *ForRentCreate) Create() (result *ForRentResult, resCode int, errDetail 
 	//合租户数
 	if f.Tenant > 0 {
 		forRent.Tenant = &f.Tenant
+	}
+
+	//姓名
+	if f.Name != "" {
+		forRent.Name = &f.Name
+	}
+
+	//性别
+	if f.Gender > 0 {
+		forRent.Gender = &f.Gender
 	}
 
 	err := tx.Create(&forRent).Error
@@ -488,6 +513,16 @@ func (f *ForRentUpdate) Update() (result *ForRentResult, resCode int, errDetail 
 	//合租户数
 	if f.Tenant > 0 {
 		forRent["tenant"] = f.Tenant
+	}
+
+	//姓名
+	if f.Name != "" {
+		forRent["name"] = f.Name
+	}
+
+	//性别
+	if f.Gender > 0 {
+		forRent["gender"] = f.Gender
 	}
 
 	err := tx.Model(&model.ForRent{}).
@@ -733,8 +768,8 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 	var tmpPaging response.Paging
 	tmpPaging.Page = page
 	tmpPaging.PageSize = pageSize
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = util.GetNumberOfPages(int(count), pageSize)
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = util.GetNumberOfPages(int(count), pageSize)
 
 	return results, &tmpPaging, util.Success, nil
 }

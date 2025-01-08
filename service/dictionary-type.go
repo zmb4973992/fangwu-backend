@@ -7,17 +7,17 @@ import (
 )
 
 type DictionaryTypeGet struct {
-	Name string `json:"dictionary_type_name" binding:"required"`
+	Value string `json:"dictionary_type_value" binding:"required"`
 }
 
 type dictionaryTypeResult struct {
-	Id   int64  `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
+	Id    int64  `json:"id,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 func (d *DictionaryTypeGet) Get() (result *dictionaryTypeResult, resCode int, errDetail *util.ErrDetail) {
 	err := global.Db.Model(&model.DictionaryType{}).
-		Where("name = ?", d.Name).
+		Where("value = ?", d.Value).
 		First(&result).Error
 	if err != nil {
 		return nil, util.ErrorFailToGetDictionaryType, util.GetErrDetail(err)

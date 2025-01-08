@@ -178,10 +178,10 @@ var Message = map[int]string{
 }
 
 type ErrDetail struct {
-	FileName     string `json:"file_name,omitempty"`
-	FunctionName string `json:"function_name,omitempty"`
-	Line         int    `json:"line,omitempty"`
-	Discription  string `json:"discription,omitempty"`
+	FileName     string `json:"file_name"`
+	FunctionName string `json:"function_name"`
+	Line         int    `json:"line"`
+	Description  string `json:"description"`
 }
 
 func GetErrDetail(err error) *ErrDetail {
@@ -196,7 +196,7 @@ func GetErrDetail(err error) *ErrDetail {
 	if !ok {
 		return &ErrDetail{
 			FileName:    "runtime.Caller出现问题，无法获取代码位置",
-			Discription: discription,
+			Description: discription,
 		}
 	}
 
@@ -205,7 +205,7 @@ func GetErrDetail(err error) *ErrDetail {
 		FileName:     file,
 		FunctionName: functionName,
 		Line:         line,
-		Discription:  discription,
+		Description:  discription,
 	}
 }
 

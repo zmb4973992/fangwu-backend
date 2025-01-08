@@ -23,7 +23,7 @@ func (d *DictionaryDetail) GetList(c *gin.Context) {
 		return
 	}
 
-	//获取字典类型的name，去获取字典类型的id
+	//获取字典类型的value，去获取字典类型的id
 	result, resCode, errDetail := dictionaryType.Get()
 	if resCode != util.Success {
 		c.JSON(

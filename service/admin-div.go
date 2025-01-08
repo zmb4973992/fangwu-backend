@@ -135,8 +135,8 @@ func (a *AdminDivGetList) GetList() (results []AdminDivResult, paging *response.
 	var tmpPaging response.Paging
 	tmpPaging.Page = 1
 	tmpPaging.PageSize = 0
-	tmpPaging.NumberOfRecords = len(results)
-	tmpPaging.NumberOfPages = 1
+	tmpPaging.TotalRecords = len(results)
+	tmpPaging.TotalPages = 1
 
 	return results, &tmpPaging, util.Success, nil
 }

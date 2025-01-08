@@ -90,8 +90,8 @@ func (d *imageGetList) GetList() (results []ImageResult, paging *response.Paging
 
 	var tmpPaging response.Paging
 	tmpPaging.Page = 1
-	tmpPaging.NumberOfRecords = int(count)
-	tmpPaging.NumberOfPages = 1
+	tmpPaging.TotalRecords = int(count)
+	tmpPaging.TotalPages = 1
 
 	return results, &tmpPaging, util.Success, nil
 }

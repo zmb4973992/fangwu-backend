@@ -11,9 +11,9 @@ type dictionaryDetailGet struct {
 	Id int64 `json:"id" binding:"required"`
 }
 
-type dictionaryDetailGetByName struct {
-	DictionaryTypeName   string
-	DictionaryDetailName string
+type dictionaryDetailGetByValue struct {
+	DictionaryTypeValue   string
+	DictionaryDetailValue string
 }
 
 type DictionaryDetailGetList struct {
@@ -21,8 +21,8 @@ type DictionaryDetailGetList struct {
 }
 
 type DictionaryDetailResult struct {
-	Id   int64  `json:"id,omitempty"`
-	Name string `json:"name,omitempty"`
+	Id    int64  `json:"id,omitempty"`
+	Value string `json:"value,omitempty"`
 }
 
 func (d *dictionaryDetailGet) Get() (result *DictionaryDetailResult, resCode int, errDetail *util.ErrDetail) {
@@ -35,14 +35,14 @@ func (d *dictionaryDetailGet) Get() (result *DictionaryDetailResult, resCode int
 
 	var tmpRes DictionaryDetailResult
 	tmpRes.Id = dictionaryDetail.Id
-	tmpRes.Name = dictionaryDetail.Name
+	tmpRes.Value = dictionaryDetail.Value
 
 	return &tmpRes, util.Success, nil
 }
 
-func (d *dictionaryDetailGetByName) GetByName() (result *DictionaryDetailResult, resCode int, errDetail *util.ErrDetail) {
+func (d *dictionaryDetailGetByValue) GetByValue() (result *DictionaryDetailResult, resCode int, errDetail *util.ErrDetail) {
 	var dictionaryType model.DictionaryType
-	err := global.Db.Where("name = ?", d.DictionaryTypeName).
+	err := global.Db.Where("value = ?", d.DictionaryTypeValue).
 		First(&dictionaryType).Error
 	if err != nil {
 		return nil, util.ErrorFailToGetDictionaryType, util.GetErrDetail(err)
@@ -50,7 +50,7 @@ func (d *dictionaryDetailGetByName) GetByName() (result *DictionaryDetailResult,
 
 	var dictionaryDetail model.DictionaryDetail
 	err = global.Db.Where("dictionary_type_id = ?", dictionaryType.Id).
-		Where("name = ?", d.DictionaryDetailName).
+		Where("value = ?", d.DictionaryDetailValue).
 		First(&dictionaryDetail).Error
 	if err != nil {
 		return nil, util.ErrorFailToGetDictionaryDetail, util.GetErrDetail(err)
@@ -58,7 +58,7 @@ func (d *dictionaryDetailGetByName) GetByName() (result *DictionaryDetailResult,
 
 	var tmpRes DictionaryDetailResult
 	tmpRes.Id = dictionaryDetail.Id
-	tmpRes.Name = dictionaryDetail.Name
+	tmpRes.Value = dictionaryDetail.Value
 
 	return &tmpRes, util.Success, nil
 }
@@ -74,7 +74,7 @@ func (d *DictionaryDetailGetList) GetList() (results []DictionaryDetailResult, p
 	for _, v := range dictionaryDetails {
 		var result DictionaryDetailResult
 		result.Id = v.Id
-		result.Name = v.Name
+		result.Value = v.Value
 		results = append(results, result)
 	}
 
@@ -82,8 +82,8 @@ func (d *DictionaryDetailGetList) GetList() (results []DictionaryDetailResult, p
 	var tmpPaging response.Paging
 	tmpPaging.Page = 1
 	tmpPaging.PageSize = 0
-	tmpPaging.NumberOfRecords = len(results)
-	tmpPaging.NumberOfPages = 1
+	tmpPaging.TotalRecords = len(results)
+	tmpPaging.TotalPages = 1
 
 	return results, &tmpPaging, util.Success, nil
 }
