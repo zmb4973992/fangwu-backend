@@ -8,13 +8,10 @@ import (
 
 type Community struct {
 	Base
-	Name         string `gorm:"index;"`                                             //名称
-	Code         string `gorm:"index;"`                                             //代码
-	ParentCode   int    `gorm:"index;"`                                             //上级行政区划代码
-	PinyinPrefix string `gorm:"index;"`                                             //拼音首字母
-	SimilarName1 string `json:"similar_name_1" gorm:"index;column:similar_name_1;"` //相似名称1
-	SimilarName2 string `json:"similar_name_2" gorm:"index;column:similar_name_2;"` //相似名称2
-	SimilarName3 string `json:"similar_name_3" gorm:"index;column:similar_name_3;"` //相似名称3
+	Name         string `gorm:"index;"` //名称
+	Code         string `gorm:"index;"` //代码
+	ParentCode   int    `gorm:"index;"` //上级行政区划代码
+	PinyinPrefix string `gorm:"index;"` //拼音首字母
 }
 
 func (c Community) TableName() string {
