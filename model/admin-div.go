@@ -8,11 +8,14 @@ import (
 
 type AdminDiv struct {
 	Base
-	Code         int    `gorm:"index;"` //行政区划代码
-	ParentCode   int    `gorm:"index;"` //上级行政区划代码
-	Name         string `gorm:"index;"` //名称
-	Level        int    `gorm:"index;"` //层级
-	PinyinPrefix string `gorm:"index;"` //拼音首字母
+	Code         int    `gorm:"index;"`                      //行政区划代码
+	ParentCode   int    `gorm:"index;"`                      //上级行政区划代码
+	Name         string `gorm:"index;"`                      //名称
+	Level        int    `gorm:"index;"`                      //层级
+	PinyinPrefix string `gorm:"index;"`                      //拼音首字母
+	SimilarName1 string `gorm:"index;column:similar_name_1"` //相近名称1
+	SimilarName2 string `gorm:"index;column:similar_name_2"` //相近名称2
+	SimilarName3 string `gorm:"index;column:similar_name_3"` //相近名称3
 }
 
 func (a AdminDiv) TableName() string {
@@ -31,7 +34,7 @@ func executeSqlForAdminDiv() {
 	}
 
 	//读取行政区划数据的sql文件
-	sqlStatemnent, err := os.ReadFile("./config/administrative-division.sql")
+	sqlStatemnent, err := os.ReadFile("./config/admin-div.sql")
 	if err != nil {
 		global.SugaredLogger.Panicln(err)
 	}

@@ -86,6 +86,7 @@ func ConnectToPgsql() {
 		&ArchivedComplaint{}, //已归档投诉
 		&Footprint{},         //足迹
 		&ViewContact{},       //查看联系方式
+		&Community{},         //小区
 	)
 	if err != nil {
 		global.SugaredLogger.Panicln(err)
@@ -123,4 +124,5 @@ func ConnectToRedis() {
 
 func executeSql() {
 	executeSqlForAdminDiv()
+	executeSqlForCommunity()
 }

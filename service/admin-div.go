@@ -17,8 +17,9 @@ type AdminDivGetByName struct {
 
 type AdminDivGetList struct {
 	list
-	ParentCode int64 `json:"parent_code,omitempty"`
-	Level      int   `json:"level,omitempty"`
+	ParentCode  int64 `json:"parent_code,omitempty"`
+	Level       int   `json:"level,omitempty"`
+	GrandpaCode int64 `json:"grandpa_code,omitempty"`
 }
 
 type AdminDivResult struct {
@@ -75,6 +76,9 @@ func (a *AdminDivGetList) GetList() (results []AdminDivResult, paging *response.
 	if a.Level > 0 {
 		db = db.Where("level = ?", a.Level)
 	}
+	if a.GrandpaCode > 0 {
+		db = db.Where("parent_code in (select code from administrative_division where parent_code = ?)", a.GrandpaCode)
+	}
 
 	// count
 	var count int64
@@ -105,6 +109,9 @@ func (a *AdminDivGetList) GetList() (results []AdminDivResult, paging *response.
 	//limit
 	pageSize := global.Config.Paging.PageSize
 	maxPageSize := global.Config.Paging.MaxPageSize
+	if a.PageSize == 0 {
+		pageSize = global.Config.Paging.MaxPageSize
+	}
 	if a.PageSize > 0 && a.PageSize <= maxPageSize {
 		pageSize = a.PageSize
 	}
