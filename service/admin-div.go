@@ -7,12 +7,8 @@ import (
 	"fangwu-backend/util"
 )
 
-type adminDivGetByCode struct {
+type adminDivGet struct {
 	Code int `json:"code" binding:"required"`
-}
-
-type AdminDivGetByName struct {
-	Name string `json:"name" binding:"required"`
 }
 
 type AdminDivGetList struct {
@@ -29,28 +25,9 @@ type AdminDivResult struct {
 	ParentCode   int    `json:"parent_code,omitempty"`
 }
 
-func (a *adminDivGetByCode) Get() (result *AdminDivResult, resCode int, errDetail *util.ErrDetail) {
+func (a *adminDivGet) Get() (result *AdminDivResult, resCode int, errDetail *util.ErrDetail) {
 	var adminDiv model.AdminDiv
 	err := global.Db.Where("code = ?", a.Code).
-		First(&adminDiv).Error
-	if err != nil {
-		return nil, util.ErrorFailToGetAdminDiv, util.GetErrDetail(err)
-	}
-
-	var tmpRes AdminDivResult
-	tmpRes.Code = adminDiv.Code
-	tmpRes.Name = adminDiv.Name
-	tmpRes.PinyinPrefix = adminDiv.PinyinPrefix
-	tmpRes.ParentCode = adminDiv.ParentCode
-
-	return &tmpRes, util.Success, nil
-}
-
-// 只能查询2级行政区划
-func (a *AdminDivGetByName) Get() (result *AdminDivResult, resCode int, errDetail *util.ErrDetail) {
-	var adminDiv model.AdminDiv
-	err := global.Db.Where("name like ?", "%"+a.Name+"%").
-		Where("level = 2").
 		First(&adminDiv).Error
 	if err != nil {
 		return nil, util.ErrorFailToGetAdminDiv, util.GetErrDetail(err)
@@ -109,9 +86,6 @@ func (a *AdminDivGetList) GetList() (results []AdminDivResult, paging *response.
 	//limit
 	pageSize := global.Config.Paging.PageSize
 	maxPageSize := global.Config.Paging.MaxPageSize
-	if a.PageSize == 0 {
-		pageSize = global.Config.Paging.MaxPageSize
-	}
 	if a.PageSize > 0 && a.PageSize <= maxPageSize {
 		pageSize = a.PageSize
 	}

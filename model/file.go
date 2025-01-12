@@ -13,6 +13,7 @@ type File struct {
 	SizeKb       float64 `gorm:"index;"`
 	BusinessType *string `gorm:"index;"`
 	BusinessId   *int64  `gorm:"index;"`
+	Sort         int     `gorm:"index;"`
 }
 
 // TableName 修改数据库的表名

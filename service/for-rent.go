@@ -13,62 +13,65 @@ type ForRentGet struct {
 }
 
 type ForRentGetContact struct {
-	Id int64 `json:"-"`
+	Id     int64 `json:"-"`
+	UserId int64 `json:"-"`
 }
 
 type ForRentCreate struct {
-	Creator           int64   `json:"-"`                                     //用户id
-	Price             float64 `json:"price" binding:"required"`              //价格
-	RentType          int64   `json:"rent_type" binding:"required"`          //租赁类型，如整租、合租等
-	Description       string  `json:"description" binding:"required"`        //描述
-	GenderRestriction int64   `json:"gender_restriction" binding:"required"` //男、女、男女不限等
-	MobilePhone       string  `json:"mobile_phone,omitempty"`                //手机号
-	WeChatId          string  `json:"wechat_id,omitempty"`                   //微信id
-	FileIds           []int64 `json:"file_ids,omitempty"`                    //文件id
-	Level1AdminDiv    int     `json:"level_1_admin_div,omitempty"`           //一级行政区划（省/自治区/直辖市）
-	Level2AdminDiv    int     `json:"level_2_admin_div,omitempty"`           //二级行政区划（市/区/县）
-	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`           //三级行政区划（乡/镇）
-	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`           //四级行政区划（村/社区）
-	Community         string  `json:"community" binding:"required"`          //小区
-	Area              int     `json:"area,omitempty"`                        //面积
-	Bedroom           int     `json:"bedroom,omitempty"`                     //卧室数量
-	LivingRoom        int     `json:"living_room,omitempty"`                 //客厅数量
-	Bathroom          int     `json:"bathroom,omitempty"`                    //卫生间数量
-	Kitchen           int     `json:"kitchen,omitempty"`                     //厨房数量
-	Floor             int     `json:"floor,omitempty"`                       //楼层
-	TotalFloor        int     `json:"total_floor,omitempty"`                 //总楼层
-	Orientation       int64   `json:"orientation,omitempty"`                 //朝向
-	Tenant            int     `json:"tenant,omitempty"`                      //合租户数
-	Name              string  `json:"name,omitempty"`                        //姓名
-	Gender            int64   `json:"gender,omitempty"`                      //性别
+	Creator           int64          `json:"-"`                                     //用户id
+	Price             float64        `json:"price" binding:"required"`              //价格
+	RentType          int64          `json:"rent_type" binding:"required"`          //租赁类型，如整租、合租等
+	Description       string         `json:"description" binding:"required"`        //描述
+	GenderRestriction int64          `json:"gender_restriction" binding:"required"` //男、女、男女不限等
+	MobilePhone       string         `json:"mobile_phone,omitempty"`                //手机号
+	WeChatId          string         `json:"wechat_id,omitempty"`                   //微信id
+	Level1AdminDiv    int            `json:"level_1_admin_div,omitempty"`           //一级行政区划（省/自治区/直辖市）
+	Level2AdminDiv    int            `json:"level_2_admin_div,omitempty"`           //二级行政区划（市/区/县）
+	Level3AdminDiv    int            `json:"level_3_admin_div,omitempty"`           //三级行政区划（乡/镇）
+	Level4AdminDiv    int            `json:"level_4_admin_div,omitempty"`           //四级行政区划（村/社区）
+	Community         string         `json:"community" binding:"required"`          //小区
+	Area              int            `json:"area,omitempty"`                        //面积
+	Bedroom           int            `json:"bedroom,omitempty"`                     //卧室数量
+	LivingRoom        int            `json:"living_room,omitempty"`                 //客厅数量
+	Bathroom          int            `json:"bathroom,omitempty"`                    //卫生间数量
+	Kitchen           int            `json:"kitchen,omitempty"`                     //厨房数量
+	Floor             int            `json:"floor,omitempty"`                       //楼层
+	TotalFloor        int            `json:"total_floor,omitempty"`                 //总楼层
+	Orientation       int64          `json:"orientation,omitempty"`                 //朝向
+	Tenant            int            `json:"tenant,omitempty"`                      //合租户数
+	Name              string         `json:"name,omitempty"`                        //姓名
+	Gender            int64          `json:"gender,omitempty"`                      //性别
+	Files             []UploadResult `json:"files,omitempty"`                       //文件
+
 }
 
 type ForRentUpdate struct {
-	LastModifier      int64   `json:"-"`
-	Id                int64   `json:"id" binding:"required"`
-	Price             float64 `json:"price,omitempty"`              //价格
-	RentType          int64   `json:"rent_type,omitempty"`          //租赁类型，如整租、合租等
-	Description       string  `json:"description,omitempty"`        //描述
-	GenderRestriction int64   `json:"gender_restriction,omitempty"` //男、女、男女不限等
-	MobilePhone       string  `json:"mobile_phone,omitempty"`       //手机号
-	WeChatId          string  `json:"wechat_id,omitempty"`          //微信id
-	FileIds           []int64 `json:"file_ids,omitempty"`           //文件id
-	Level1AdminDiv    int     `json:"level_1_admin_div,omitempty"`  //一级行政区划（省/自治区/直辖市）
-	Level2AdminDiv    int     `json:"level_2_admin_div,omitempty"`  //二级行政区划（市/区/县）
-	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`  //三级行政区划（乡/镇）
-	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`  //四级行政区划（村/社区）
-	Community         string  `json:"community,omitempty"`          //小区
-	Area              int     `json:"area,omitempty"`               //面积
-	Bedroom           int     `json:"bedroom,omitempty"`            //卧室数量
-	LivingRoom        int     `json:"living_room,omitempty"`        //客厅数量
-	Bathroom          int     `json:"bathroom,omitempty"`           //卫生间数量
-	Kitchen           int     `json:"kitchen,omitempty"`            //厨房数量
-	Floor             int     `json:"floor,omitempty"`              //楼层
-	TotalFloor        int     `json:"total_floor,omitempty"`        //总楼层
-	Orientation       int64   `json:"orientation,omitempty"`        //朝向
-	Tenant            int     `json:"tenant,omitempty"`             //合租户数
-	Name              string  `json:"name,omitempty"`               //姓名
-	Gender            int64   `json:"gender,omitempty"`             //性别
+	LastModifier      int64          `json:"-"`
+	Id                int64          `json:"id" binding:"required"`
+	Price             float64        `json:"price,omitempty"`              //价格
+	RentType          int64          `json:"rent_type,omitempty"`          //租赁类型，如整租、合租等
+	Description       string         `json:"description,omitempty"`        //描述
+	GenderRestriction int64          `json:"gender_restriction,omitempty"` //男、女、男女不限等
+	MobilePhone       string         `json:"mobile_phone,omitempty"`       //手机号
+	WeChatId          string         `json:"wechat_id,omitempty"`          //微信id
+	Level1AdminDiv    int            `json:"level_1_admin_div,omitempty"`  //一级行政区划（省/自治区/直辖市）
+	Level2AdminDiv    int            `json:"level_2_admin_div,omitempty"`  //二级行政区划（市/区/县）
+	Level3AdminDiv    int            `json:"level_3_admin_div,omitempty"`  //三级行政区划（乡/镇）
+	Level4AdminDiv    int            `json:"level_4_admin_div,omitempty"`  //四级行政区划（村/社区）
+	Community         string         `json:"community,omitempty"`          //小区
+	Area              int            `json:"area,omitempty"`               //面积
+	Bedroom           int            `json:"bedroom,omitempty"`            //卧室数量
+	LivingRoom        int            `json:"living_room,omitempty"`        //客厅数量
+	Bathroom          int            `json:"bathroom,omitempty"`           //卫生间数量
+	Kitchen           int            `json:"kitchen,omitempty"`            //厨房数量
+	Floor             int            `json:"floor,omitempty"`              //楼层
+	TotalFloor        int            `json:"total_floor,omitempty"`        //总楼层
+	Orientation       int64          `json:"orientation,omitempty"`        //朝向
+	Tenant            int            `json:"tenant,omitempty"`             //合租户数
+	Name              string         `json:"name,omitempty"`               //姓名
+	Gender            int64          `json:"gender,omitempty"`             //性别
+	Files             []UploadResult `json:"files,omitempty"`              //文件
+
 }
 
 type ForRentDelete struct {
@@ -162,26 +165,27 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 	var download imageGetList
 	download.businessType = forRent.TableName()
 	download.businessId = forRent.Id
+	download.OrderBy = "sort"
 	tmpRes.Files, _, _, _ = download.GetList()
 
 	//获取行政区划
 	if forRent.Level1AdminDiv != nil {
-		var level1AdminDiv adminDivGetByCode
+		var level1AdminDiv adminDivGet
 		level1AdminDiv.Code = *forRent.Level1AdminDiv
 		tmpRes.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 	}
 	if forRent.Level2AdminDiv != nil {
-		var level2AdminDiv adminDivGetByCode
+		var level2AdminDiv adminDivGet
 		level2AdminDiv.Code = *forRent.Level2AdminDiv
 		tmpRes.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 	}
 	if forRent.Level3AdminDiv != nil {
-		var level3AdminDiv adminDivGetByCode
+		var level3AdminDiv adminDivGet
 		level3AdminDiv.Code = *forRent.Level3AdminDiv
 		tmpRes.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 	}
 	if forRent.Level4AdminDiv != nil {
-		var level4AdminDiv adminDivGetByCode
+		var level4AdminDiv adminDivGet
 		level4AdminDiv.Code = *forRent.Level4AdminDiv
 		tmpRes.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 	}
@@ -232,6 +236,7 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 }
 
 func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
+
 	//获取出租记录
 	var forRent model.ForRent
 	err := global.Db.
@@ -380,12 +385,12 @@ func (f *ForRentCreate) Create() (result *ForRentResult, resCode int, errDetail 
 	}
 
 	//批量确认上传
-	var file FileBatchConfirm
-	file.FileIds = f.FileIds
-	file.UserId = f.Creator
-	file.BusinessType = forRent.TableName()
-	file.BusinessId = forRent.Id
-	resCode, errDetail = file.BatchConfirm()
+	var upload uploadConfirm
+	upload.UserId = f.Creator
+	upload.BusinessType = forRent.TableName()
+	upload.BusinessId = forRent.Id
+	upload.Files = f.Files
+	resCode, errDetail = upload.Confirm()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -534,13 +539,13 @@ func (f *ForRentUpdate) Update() (result *ForRentResult, resCode int, errDetail 
 		return nil, util.ErrorFailToUpdateForRent, util.GetErrDetail(err)
 	}
 
-	//批量确认上传
-	var uploadBatchConfirm FileBatchConfirm
-	uploadBatchConfirm.FileIds = f.FileIds
-	uploadBatchConfirm.UserId = f.LastModifier
-	uploadBatchConfirm.BusinessType = "for_rent"
-	uploadBatchConfirm.BusinessId = f.Id
-	resCode, errDetail = uploadBatchConfirm.BatchConfirm()
+	//确认上传
+	var upload uploadConfirm
+	upload.UserId = f.LastModifier
+	upload.BusinessType = "for_rent"
+	upload.BusinessId = f.Id
+	upload.Files = f.Files
+	resCode, errDetail = upload.Confirm()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -701,26 +706,27 @@ func (f *ForRentGetList) GetList() (results []ForRentResult, paging *response.Pa
 		var download imageGetList
 		download.businessType = forRent.TableName()
 		download.businessId = forRent.Id
+		download.OrderBy = "sort"
 		result.Files, _, _, _ = download.GetList()
 
 		//获取行政区划
 		if forRent.Level1AdminDiv != nil {
-			var adminDiv adminDivGetByCode
+			var adminDiv adminDivGet
 			adminDiv.Code = *forRent.Level1AdminDiv
 			result.Level1AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level2AdminDiv != nil {
-			var adminDiv adminDivGetByCode
+			var adminDiv adminDivGet
 			adminDiv.Code = *forRent.Level2AdminDiv
 			result.Level2AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level3AdminDiv != nil {
-			var adminDiv adminDivGetByCode
+			var adminDiv adminDivGet
 			adminDiv.Code = *forRent.Level3AdminDiv
 			result.Level3AdminDiv, _, _ = adminDiv.Get()
 		}
 		if forRent.Level4AdminDiv != nil {
-			var adminDiv adminDivGetByCode
+			var adminDiv adminDivGet
 			adminDiv.Code = *forRent.Level4AdminDiv
 			result.Level4AdminDiv, _, _ = adminDiv.Get()
 		}

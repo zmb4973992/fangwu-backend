@@ -7,15 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type administrativeDivision struct{}
+type adminDiv struct{}
 
-func (a *administrativeDivision) appendAdministrativeDivisionRouterTo(param *gin.RouterGroup) {
-	var administrativeDivisionController controller.AdminDiv
+func (a *adminDiv) appendAdminDivRouterTo(param *gin.RouterGroup) {
+	var adminDivController controller.AdminDiv
 
-	administrativeDivisionRouter := param.Group("/admin-div")
-	administrativeDivisionRouter.Use(middleware.RateLimit("ip", 1, "per_second"))
+	adminDivRouter := param.Group("/admin-div")
+	adminDivRouter.Use(middleware.RateLimit("ip", 1, "per_second"))
 
-	publicRouter := administrativeDivisionRouter.Group("")
-	publicRouter.POST("", administrativeDivisionController.GetByName)
-	publicRouter.POST("/list", administrativeDivisionController.GetList)
+	publicRouter := adminDivRouter.Group("")
+	publicRouter.POST("/list", adminDivController.GetList)
 }
