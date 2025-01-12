@@ -45,6 +45,16 @@ func (f *ForRent) GetContact(c *gin.Context) {
 		return
 	}
 
+	userId, resCode, errDetail := util.GetUserId(c)
+	if resCode != util.Success {
+		c.JSON(
+			http.StatusOK,
+			response.GenerateSingle(nil, resCode, errDetail),
+		)
+		return
+	}
+
+	param.UserId = userId
 	result, resCode, errDetail := param.GetContact()
 	c.JSON(
 		http.StatusOK,

@@ -12,12 +12,12 @@ type ComplaintGet struct {
 }
 
 type ComplaintCreate struct {
-	Creator      int64   `json:"-"`
-	BusinessType string  `json:"business_type" binding:"required"`
-	BusinessId   int64   `json:"business_id" binding:"required"`
-	Reason       int64   `json:"reason" binding:"required"`
-	Description  string  `json:"description,omitempty"`
-	FileIds      []int64 `json:"file_ids,omitempty"`
+	Creator      int64          `json:"-"`
+	BusinessType string         `json:"business_type" binding:"required"`
+	BusinessId   int64          `json:"business_id" binding:"required"`
+	Reason       int64          `json:"reason" binding:"required"`
+	Description  string         `json:"description,omitempty"`
+	Files        []UploadResult `json:"files,omitempty"`
 }
 
 type ComplaintUpdate struct {
@@ -97,6 +97,7 @@ func (c *ComplaintGet) Get() (result *ComplaintResult, resCode int, errDetail *u
 	var download imageGetList
 	download.businessType = complaint.TableName()
 	download.businessId = complaint.Id
+	download.OrderBy = "sort"
 	tmpRes.Files, _, _, _ = download.GetList()
 
 	return &tmpRes, util.Success, nil
@@ -134,12 +135,12 @@ func (c *ComplaintCreate) Create() (result *ComplaintResult, resCode int, errDet
 	}
 
 	//批量确认上传
-	var file FileBatchConfirm
-	file.FileIds = c.FileIds
+	var file uploadConfirm
 	file.UserId = c.Creator
 	file.BusinessType = complaint.TableName()
 	file.BusinessId = complaint.Id
-	resCode, errDetail = file.BatchConfirm()
+	file.Files = c.Files
+	resCode, errDetail = file.Confirm()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -309,6 +310,7 @@ func (c *ComplaintGetList) GetList() (results []ComplaintResult, paging *respons
 		var download imageGetList
 		download.businessType = complaint.TableName()
 		download.businessId = complaint.Id
+		download.OrderBy = "sort"
 		result.Files, _, _, _ = download.GetList()
 
 		results = append(results, result)

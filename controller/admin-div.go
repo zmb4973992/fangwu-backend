@@ -13,24 +13,6 @@ import (
 
 type AdminDiv struct{}
 
-func (a *AdminDiv) GetByName(c *gin.Context) {
-	var param service.AdminDivGetByName
-	err := c.ShouldBindJSON(&param)
-	if err != nil {
-		c.JSON(
-			http.StatusOK,
-			response.GenerateSingle(nil, util.ErrorInvalidUriParams, util.GetErrDetail(err)),
-		)
-		return
-	}
-
-	result, resCode, errDetail := param.Get()
-	c.JSON(
-		http.StatusOK,
-		response.GenerateSingle(result, resCode, errDetail),
-	)
-}
-
 func (a *AdminDiv) GetList(c *gin.Context) {
 	var param service.AdminDivGetList
 	err := c.ShouldBindJSON(&param)

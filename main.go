@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fangwu-backend/controller"
 	"fangwu-backend/global"
 	"fangwu-backend/middleware"
 	"fangwu-backend/model"
@@ -22,8 +21,7 @@ func main() {
 	//连接到数据库
 	model.ConnectToDb()
 	//初始化上传路径
-	var file controller.Upload
-	file.InitUploadingPath()
+	util.InitUploadPath()
 	//加载验证码
 	util.LoadCaptcha()
 	//生成引擎

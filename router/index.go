@@ -19,7 +19,6 @@ type routerEnhancer struct {
 	user
 	upload
 	forRent
-	fileConfirm
 	seekHouse
 	contactInfoBlacklist
 	complaint
@@ -28,7 +27,7 @@ type routerEnhancer struct {
 	notification
 	captcha
 	favorite
-	administrativeDivision
+	adminDiv
 }
 
 // LoadEngine 初始化引擎,最终返回*gin.Engine类型，给main调用
@@ -61,7 +60,6 @@ func LoadEngine() *gin.Engine {
 	routerEnhancer.appendUserRouterTo(defaultGroup)
 	routerEnhancer.appendUploadRouterTo(defaultGroup)
 	routerEnhancer.appendForRentRouterTo(defaultGroup)
-	routerEnhancer.appendFileConfirmRouterTo(defaultGroup)
 	routerEnhancer.appendSeekHouseRouterTo(defaultGroup)
 	routerEnhancer.appendContactInfoBlacklistRouterTo(defaultGroup)
 	routerEnhancer.appendComplaintRouterTo(defaultGroup)
@@ -70,7 +68,7 @@ func LoadEngine() *gin.Engine {
 	routerEnhancer.appendNotificationRouterTo(defaultGroup)
 	routerEnhancer.appendCaptchaRouterTo(defaultGroup)
 	routerEnhancer.appendFavoriteRouterTo(defaultGroup)
-	routerEnhancer.appendAdministrativeDivisionRouterTo(defaultGroup)
+	routerEnhancer.appendAdminDivRouterTo(defaultGroup)
 
 	//引擎配置完成后，返回
 	return engine

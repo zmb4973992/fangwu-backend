@@ -8,9 +8,12 @@ import (
 
 func FieldIsInModel(db *gorm.DB, model string, field string) bool {
 	var count int64
-	sqlStatement := fmt.Sprintf("select column_name from information_schema.columns where table_name = '%s' and column_name = '%s'",
+
+	sqlStatement := fmt.Sprintf("select column_name from information_schema.columns where table_schema = 'public' and table_name = '%s' and column_name = '%s'",
 		model, field)
+	fmt.Println(sqlStatement)
 	db.Raw(sqlStatement).Count(&count)
+	fmt.Println(count)
 	return count > 0
 }
 

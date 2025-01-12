@@ -17,44 +17,44 @@ type SeekHouseGetContact struct {
 }
 
 type SeekHouseCreate struct {
-	Creator           int64   `json:"-"`
-	MaxBudget         float64 `json:"max_budget,omitempty"`
-	MinBudget         float64 `json:"min_budget,omitempty"`
-	RentType          int64   `json:"rent_type" binding:"required"`
-	Description       string  `json:"description" binding:"required"`
-	GenderRestriction int64   `json:"gender_restriction" binding:"required"`
-	MobilePhone       string  `json:"mobile_phone,omitempty"`
-	WeChatId          string  `json:"wechat_id,omitempty"`
-	FileIds           []int64 `json:"file_ids,omitempty"`
-	Level1AdminDiv    int     `json:"level_1_admin_div,omitempty"`
-	Level2AdminDiv    int     `json:"level_2_admin_div,omitempty"`
-	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
-	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
-	Community         string  `json:"community,omitempty"`
-	Area              int     `json:"area,omitempty"`
-	Name              string  `json:"name,omitempty"`
-	Gender            int64   `json:"gender,omitempty"`
+	Creator           int64          `json:"-"`
+	MaxBudget         float64        `json:"max_budget,omitempty"`
+	MinBudget         float64        `json:"min_budget,omitempty"`
+	RentType          int64          `json:"rent_type" binding:"required"`
+	Description       string         `json:"description" binding:"required"`
+	GenderRestriction int64          `json:"gender_restriction" binding:"required"`
+	MobilePhone       string         `json:"mobile_phone,omitempty"`
+	WeChatId          string         `json:"wechat_id,omitempty"`
+	Level1AdminDiv    int            `json:"level_1_admin_div,omitempty"`
+	Level2AdminDiv    int            `json:"level_2_admin_div,omitempty"`
+	Level3AdminDiv    int            `json:"level_3_admin_div,omitempty"`
+	Level4AdminDiv    int            `json:"level_4_admin_div,omitempty"`
+	Community         string         `json:"community,omitempty"`
+	Area              int            `json:"area,omitempty"`
+	Name              string         `json:"name,omitempty"`
+	Gender            int64          `json:"gender,omitempty"`
+	Files             []UploadResult `json:"files,omitempty"`
 }
 
 type SeekHouseUpdate struct {
-	LastModifier      int64   `json:"-"`
-	Id                int64   `json:"id" binding:"required"`
-	MaxBudget         float64 `json:"max_budget,omitempty"`
-	MinBudget         float64 `json:"min_budget,omitempty"`
-	RentType          int64   `json:"rent_type,omitempty"`
-	Description       string  `json:"description,omitempty"`
-	GenderRestriction int64   `json:"gender_restriction,omitempty"`
-	MobilePhone       string  `json:"mobile_phone,omitempty"`
-	WeChatId          string  `json:"wechat_id,omitempty"`
-	FileIds           []int64 `json:"file_ids,omitempty"`
-	Level1AdminDiv    int     `json:"level_1_admin_div,omitempty"`
-	Level2AdminDiv    int     `json:"level_2_admin_div,omitempty"`
-	Level3AdminDiv    int     `json:"level_3_admin_div,omitempty"`
-	Level4AdminDiv    int     `json:"level_4_admin_div,omitempty"`
-	Community         string  `json:"community,omitempty"`
-	Area              int     `json:"area,omitempty"`
-	Name              string  `json:"name,omitempty"`
-	Gender            int64   `json:"gender,omitempty"`
+	LastModifier      int64          `json:"-"`
+	Id                int64          `json:"id" binding:"required"`
+	MaxBudget         float64        `json:"max_budget,omitempty"`
+	MinBudget         float64        `json:"min_budget,omitempty"`
+	RentType          int64          `json:"rent_type,omitempty"`
+	Description       string         `json:"description,omitempty"`
+	GenderRestriction int64          `json:"gender_restriction,omitempty"`
+	MobilePhone       string         `json:"mobile_phone,omitempty"`
+	WeChatId          string         `json:"wechat_id,omitempty"`
+	Level1AdminDiv    int            `json:"level_1_admin_div,omitempty"`
+	Level2AdminDiv    int            `json:"level_2_admin_div,omitempty"`
+	Level3AdminDiv    int            `json:"level_3_admin_div,omitempty"`
+	Level4AdminDiv    int            `json:"level_4_admin_div,omitempty"`
+	Community         string         `json:"community,omitempty"`
+	Area              int            `json:"area,omitempty"`
+	Name              string         `json:"name,omitempty"`
+	Gender            int64          `json:"gender,omitempty"`
+	Files             []UploadResult `json:"files,omitempty"`
 }
 
 type SeekHouseDelete struct {
@@ -144,26 +144,27 @@ func (s *SeekHouseGet) Get() (result *SeekHouseResult, resCode int, errDetail *u
 	var download imageGetList
 	download.businessType = seekHouse.TableName()
 	download.businessId = seekHouse.Id
+	download.OrderBy = "sort"
 	tmpRes.Files, _, _, _ = download.GetList()
 
 	//获取行政区划
 	if seekHouse.Level1AdminDiv != nil {
-		var level1AdminDiv adminDivGetByCode
+		var level1AdminDiv adminDivGet
 		level1AdminDiv.Code = *seekHouse.Level1AdminDiv
 		tmpRes.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 	}
 	if seekHouse.Level2AdminDiv != nil {
-		var level2AdminDiv adminDivGetByCode
+		var level2AdminDiv adminDivGet
 		level2AdminDiv.Code = *seekHouse.Level2AdminDiv
 		tmpRes.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 	}
 	if seekHouse.Level3AdminDiv != nil {
-		var level3AdminDiv adminDivGetByCode
+		var level3AdminDiv adminDivGet
 		level3AdminDiv.Code = *seekHouse.Level3AdminDiv
 		tmpRes.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 	}
 	if seekHouse.Level4AdminDiv != nil {
-		var level4AdminDiv adminDivGetByCode
+		var level4AdminDiv adminDivGet
 		level4AdminDiv.Code = *seekHouse.Level4AdminDiv
 		tmpRes.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 	}
@@ -294,12 +295,12 @@ func (s *SeekHouseCreate) Create() (result *SeekHouseResult, resCode int, errDet
 	}
 
 	//批量确认上传
-	var file FileBatchConfirm
-	file.FileIds = s.FileIds
-	file.UserId = s.Creator
-	file.BusinessType = seekHouse.TableName()
-	file.BusinessId = seekHouse.Id
-	resCode, errDetail = file.BatchConfirm()
+	var upload uploadConfirm
+	upload.UserId = s.Creator
+	upload.BusinessType = seekHouse.TableName()
+	upload.BusinessId = seekHouse.Id
+	upload.Files = s.Files
+	resCode, errDetail = upload.Confirm()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -421,12 +422,12 @@ func (s *SeekHouseUpdate) Update() (result *SeekHouseResult, resCode int, errDet
 	}
 
 	//批量确认上传
-	var uploadBatchConfirm FileBatchConfirm
-	uploadBatchConfirm.FileIds = s.FileIds
-	uploadBatchConfirm.UserId = s.LastModifier
-	uploadBatchConfirm.BusinessType = "seek_house"
-	uploadBatchConfirm.BusinessId = s.Id
-	resCode, errDetail = uploadBatchConfirm.BatchConfirm()
+	var upload uploadConfirm
+	upload.UserId = s.LastModifier
+	upload.BusinessType = "seek_house"
+	upload.BusinessId = s.Id
+	upload.Files = s.Files
+	resCode, errDetail = upload.Confirm()
 	if resCode != util.Success {
 		tx.Rollback()
 		return nil, resCode, errDetail
@@ -588,40 +589,31 @@ func (s *SeekHouseGetList) GetList() (results []SeekHouseResult, paging *respons
 		genderRestriction.Id = seekHouse.GenderRestriction
 		result.GenderRestriction, _, _ = genderRestriction.Get()
 
-		// if seekHouse.MobilePhone != nil {
-		// 	moblelePhone := *seekHouse.MobilePhone
-		// 	result.MobilePhone = moblelePhone[:(len(*seekHouse.MobilePhone)-2)] + "**"
-		// }
-
-		// if seekHouse.WeChatId != nil {
-		// 	wechatId := *seekHouse.WeChatId
-		// 	result.WeChatId = wechatId[:(len(*seekHouse.WeChatId)-2)] + "**"
-		// }
-
 		//获取文件下载地址
 		var download imageGetList
 		download.businessType = seekHouse.TableName()
 		download.businessId = seekHouse.Id
+		download.OrderBy = "sort"
 		result.Files, _, _, _ = download.GetList()
 
 		//获取行政区划
 		if seekHouse.Level1AdminDiv != nil {
-			var level1AdminDiv adminDivGetByCode
+			var level1AdminDiv adminDivGet
 			level1AdminDiv.Code = *seekHouse.Level1AdminDiv
 			result.Level1AdminDiv, _, _ = level1AdminDiv.Get()
 		}
 		if seekHouse.Level2AdminDiv != nil {
-			var level2AdminDiv adminDivGetByCode
+			var level2AdminDiv adminDivGet
 			level2AdminDiv.Code = *seekHouse.Level2AdminDiv
 			result.Level2AdminDiv, _, _ = level2AdminDiv.Get()
 		}
 		if seekHouse.Level3AdminDiv != nil {
-			var level3AdminDiv adminDivGetByCode
+			var level3AdminDiv adminDivGet
 			level3AdminDiv.Code = *seekHouse.Level3AdminDiv
 			result.Level3AdminDiv, _, _ = level3AdminDiv.Get()
 		}
 		if seekHouse.Level4AdminDiv != nil {
-			var level4AdminDiv adminDivGetByCode
+			var level4AdminDiv adminDivGet
 			level4AdminDiv.Code = *seekHouse.Level4AdminDiv
 			result.Level4AdminDiv, _, _ = level4AdminDiv.Get()
 		}
