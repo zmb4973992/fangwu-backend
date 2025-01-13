@@ -236,7 +236,6 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 }
 
 func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
-
 	//获取出租记录
 	var forRent model.ForRent
 	err := global.Db.
@@ -247,7 +246,6 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 	}
 
 	var tmpRes ForRentResult
-
 	//获取联系方式
 	if forRent.MobilePhone != nil {
 		tmpRes.MobilePhone = *forRent.MobilePhone
@@ -266,6 +264,131 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 		tmpRes.Gender, _, _ = gender.Get()
 	}
 
+	//如果是自己发布的信息，则直接返回结果
+	if forRent.Creator != nil &&
+		*forRent.Creator == f.UserId {
+		return &tmpRes, util.Success, nil
+	}
+
+	//如果不是自己发布的信息
+	//获取查看记录
+	var viewContact model.ViewContact
+	global.Db.
+		Where("creator = ?", f.UserId).
+		Where("business_type = ?", forRent.TableName()).
+		Where("business_id = ?", f.Id).
+		Limit(1).
+		Find(&viewContact)
+	//如果以前看过
+	if viewContact.Id > 0 {
+		//更新最后查看时间
+		err = global.Db.Model(&viewContact).
+			Update("last_modified_at", time.Now()).Error
+		if err != nil {
+			return nil, util.ErrorFailToUpdateViewContact, util.GetErrDetail(err)
+		}
+		//返回结果
+		return &tmpRes, util.Success, nil
+	}
+
+	//既不是自己发布的，自己以前也没看过，则进入权限校验环节
+	//获取会员(租客版)的id数组
+	var tenantMembershipIds []int64
+	global.Db.Model(&model.Member{}).
+		Where("type1 = ?", "会员(租客版)").
+		Select("id").
+		Find(&tenantMembershipIds)
+
+	//判断用户是否为会员(租客版)
+	var membershipOfUser model.UserMember
+	global.Db.
+		Where("user_id = ?", f.UserId).
+		Where("member_id in ?", tenantMembershipIds).
+		Where("city_code = ?", forRent.Level2AdminDiv).
+		Where("expired_at > ?", time.Now()).
+		Limit(1).
+		Find(&membershipOfUser)
+
+	//如果用户不是会员，则查找普通用户的权限
+	if membershipOfUser.Id == 0 {
+		var ordinaryUser model.Member
+		err = global.Db.
+			Where("type1 = ?", "普通用户").
+			First(&ordinaryUser).Error
+		if err != nil {
+			return nil, util.ErrorFailToGetMember, util.GetErrDetail(err)
+		}
+		// 判断是否有权限
+		// 获取今日已用次数
+		var count int64
+		global.Db.Model(&model.ViewContact{}).
+			Where("creator = ?", f.UserId).
+			Where("created_at >= ?", time.Date(
+				time.Now().Year(),
+				time.Now().Month(),
+				time.Now().Day(),
+				0, 0, 0, 0,
+				time.Now().Location())).
+			Where("business_type = ?", forRent.TableName()).
+			Count(&count)
+		if count >= int64(ordinaryUser.TotalTimesForViewingForRentContactPerDay) {
+			return nil, util.ErrorNumberOfTimesIsUsedUp1, nil
+		}
+	}
+
+	//如果用户是会员，则查找相关会员的权限
+	var member model.Member
+	err = global.Db.
+		Where("id = ?", membershipOfUser.MemberId).
+		First(&member).Error
+	if err != nil {
+		return nil, util.ErrorFailToGetMember, util.GetErrDetail(err)
+	}
+	// 判断是否有权限
+	// 获取今日已用次数
+	var count int64
+	global.Db.Model(&model.ViewContact{}).
+		Where("creator = ?", f.UserId).
+		Where("created_at >= ?", time.Date(
+			time.Now().Year(),
+			time.Now().Month(),
+			time.Now().Day(),
+			0, 0, 0, 0,
+			time.Now().Location())).
+		Where("business_type = ?", forRent.TableName()).
+		Count(&count)
+	//判断今日是否已用完次数
+	if count >= int64(member.TotalTimesForViewingForRentContactPerDay) {
+		return nil, util.ErrorNumberOfTimesIsUsedUp2, nil
+	}
+
+	//更新访问记录
+	//判断以前是否获取过联系方式
+	global.Db.
+		Where("business_type = ?", forRent.TableName()).
+		Where("business_id = ?", forRent.Id).
+		Where("creator = ?", f.UserId).
+		Limit(1).
+		Find(&viewContact)
+	//如果有记录，则更新
+	if viewContact.Id > 0 {
+		err = global.Db.Model(&viewContact).
+			Update("last_modified_at", time.Now()).Error
+		if err != nil {
+			return nil, util.ErrorFailToUpdateViewContact, util.GetErrDetail(err)
+		}
+	} else { //如果没有记录，则创建
+		viewContact.BusinessType = forRent.TableName()
+		viewContact.BusinessId = forRent.Id
+		viewContact.Creator = &f.UserId
+		viewContact.LastModifier = &f.UserId
+		err = global.Db.Create(&viewContact).Error
+		if err != nil {
+			return nil, util.ErrorFailToCreateViewContact, util.GetErrDetail(err)
+		}
+	}
+
+	//返回联系方式
 	return &tmpRes, util.Success, nil
 }
 

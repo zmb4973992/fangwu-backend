@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis_rate/v10"
+	"github.com/go-redis/redis_rate/v9"
 )
 
 // limitedBy为限制方式（ip、user_id）， rate为限制次数（整数），timeUnit为时间单位（per_second、per_minute、per_hour、per_day、per_week、per_month）
