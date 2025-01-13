@@ -8,8 +8,8 @@ import (
 	"strconv"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/go-redis/redis/v8"
 	"github.com/mojocn/base64Captcha"
-	"github.com/redis/go-redis/v9"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
@@ -42,7 +42,6 @@ type config struct {
 	Captcha       captchaConfig
 	SuperPassword superPasswordConfig
 	RegisterLimit registerLimitConfig
-	UserLimit     userLimitConfig
 }
 
 type accessConfig struct {
@@ -125,14 +124,6 @@ type superPasswordConfig struct {
 type registerLimitConfig struct {
 	Enabled  bool
 	Interval int
-}
-
-type userLimitConfig struct {
-	TimesForViewingForRentContactPerDay   int
-	TotalTimesForPublishingSeekHouse      int
-	TimesForViewingSeekHouseContactPerDay int
-	TotalTimesForPublishingForRent        int
-	TopTimesPerMonth                      int
 }
 
 func initConfig() {
@@ -220,24 +211,18 @@ func initConfig() {
 
 	Config.RegisterLimit.Enabled = v.GetBool("register-limit.enabled")
 	Config.RegisterLimit.Interval = v.GetInt("register-limit.interval")
-
-	Config.UserLimit.TimesForViewingForRentContactPerDay = v.GetInt("user-limit.times-for-viewing-for-rent-contact-per-day")
-	Config.UserLimit.TotalTimesForPublishingSeekHouse = v.GetInt("user-limit.total-times-for-publishing-seek-house")
-	Config.UserLimit.TimesForViewingSeekHouseContactPerDay = v.GetInt("user-limit.times-for-viewing-seek-house-contact-per-day")
-	Config.UserLimit.TotalTimesForPublishingForRent = v.GetInt("user-limit.total-times-for-publishing-for-rent")
-	Config.UserLimit.TopTimesPerMonth = v.GetInt("user-limit.top-times-per-month")
 }
 
 func LoadConfig() {
-	//告诉viper，配置文件的路径在哪里
+	//配置文件的路径
 	v.AddConfigPath("./config/")
-	//告诉viper，配置文件的前缀是什么
+	//配置文件的前缀
 	v.SetConfigName("config")
-	//告诉viper，配置文件的后缀是什么
+	//配置文件的后缀
 	v.SetConfigType("yaml")
 
 	if err := v.ReadInConfig(); err != nil {
-		SugaredLogger.Panicln(fmt.Errorf("配置文件无法读取: %w", err))
+		fmt.Errorf("配置文件无法读取: %w", err)
 	}
 
 	//配置文件热更新

@@ -111,11 +111,3 @@ register-limit:
   enabled: "false"
   #限制时间，单位为天
   Interval: "7"
-
-#普通用户的限制
-user-limit:
-		times-for-viewing-for-rent-contact-per-day: 3
-		total-times-for-publishing-seek-house: 1
-		times-for-viewing-seek-house-contact-per-day: 3
-		total-times-for-publishing-for-rent: 1
-		top-times-per-month: 0

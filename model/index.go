@@ -4,7 +4,7 @@ import (
 	"fangwu-backend/global"
 	"time"
 
-	"github.com/redis/go-redis/v9"
+	"github.com/go-redis/redis/v8"
 	"github.com/yitter/idgenerator-go/idgen"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

@@ -7,8 +7,13 @@ import (
 
 // 自定义的错误代码
 const (
-	Success             = iota
-	ErrorUsernameExists = iota + 1000
+	// 以下编号顺序不可修改
+	Success                     = iota
+	ErrorNumberOfTimesIsUsedUp1 = iota + 1000
+	ErrorNumberOfTimesIsUsedUp2
+
+	// 以下编号顺序可以修改
+	ErrorUsernameExists
 	ErrorFailToEncrypt
 	ErrorRequestTooFast
 	ErrrorNeedLogin
@@ -88,13 +93,17 @@ const (
 	ErrorFailToUpdateNotification
 	ErrorInvalidDate
 	ErrorFailToCreateViewContact
+	ErrorFailToUpdateViewContact
 	ErrorFailToDeleteViewContact
 	ErrorFailToGetViewContact
+	ErrorFailToGetMember
 )
 
 // Message 自定义错误的message
 var Message = map[int]string{
 	Success:                        "成功",
+	ErrorNumberOfTimesIsUsedUp1:    "今天获取联系方式的次数已用完，开通会员可以获取更多次数",
+	ErrorNumberOfTimesIsUsedUp2:    "今天获取联系方式的次数已用完，请明天再试",
 	ErrorUsernameExists:            "用户名已存在",
 	ErrorFailToEncrypt:             "加密失败",
 	ErrorRequestTooFast:            "请求过快，请稍后再试",
@@ -173,8 +182,10 @@ var Message = map[int]string{
 	ErrorFailToUpdateNotification:  "更新通知失败",
 	ErrorInvalidDate:               "日期无效",
 	ErrorFailToCreateViewContact:   "创建浏览联系方式记录失败",
+	ErrorFailToUpdateViewContact:   "更新浏览联系方式记录失败",
 	ErrorFailToDeleteViewContact:   "删除浏览联系方式记录失败",
 	ErrorFailToGetViewContact:      "获取浏览联系方式记录失败",
+	ErrorFailToGetMember:           "获取会员情况失败",
 }
 
 type ErrDetail struct {
