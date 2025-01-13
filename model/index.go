@@ -100,6 +100,7 @@ func InitData() {
 	executeSql()
 	initDictionaryType()
 	initDictionaryDetail()
+	initMember()
 }
 
 func (a *Archive) Delete(archivedBy int64, archiveReason string) {

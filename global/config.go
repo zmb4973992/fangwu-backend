@@ -42,6 +42,7 @@ type config struct {
 	Captcha       captchaConfig
 	SuperPassword superPasswordConfig
 	RegisterLimit registerLimitConfig
+	UserLimit     userLimitConfig
 }
 
 type accessConfig struct {
@@ -124,6 +125,14 @@ type superPasswordConfig struct {
 type registerLimitConfig struct {
 	Enabled  bool
 	Interval int
+}
+
+type userLimitConfig struct {
+	TimesForViewingForRentContactPerDay   int
+	TotalTimesForPublishingSeekHouse      int
+	TimesForViewingSeekHouseContactPerDay int
+	TotalTimesForPublishingForRent        int
+	TopTimesPerMonth                      int
 }
 
 func initConfig() {
@@ -211,6 +220,12 @@ func initConfig() {
 
 	Config.RegisterLimit.Enabled = v.GetBool("register-limit.enabled")
 	Config.RegisterLimit.Interval = v.GetInt("register-limit.interval")
+
+	Config.UserLimit.TimesForViewingForRentContactPerDay = v.GetInt("user-limit.times-for-viewing-for-rent-contact-per-day")
+	Config.UserLimit.TotalTimesForPublishingSeekHouse = v.GetInt("user-limit.total-times-for-publishing-seek-house")
+	Config.UserLimit.TimesForViewingSeekHouseContactPerDay = v.GetInt("user-limit.times-for-viewing-seek-house-contact-per-day")
+	Config.UserLimit.TotalTimesForPublishingForRent = v.GetInt("user-limit.total-times-for-publishing-for-rent")
+	Config.UserLimit.TopTimesPerMonth = v.GetInt("user-limit.top-times-per-month")
 }
 
 func LoadConfig() {
