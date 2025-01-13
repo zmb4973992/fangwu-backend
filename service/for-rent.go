@@ -320,7 +320,7 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 		}
 		// 判断是否有权限
 		// 获取今日已用次数
-		var count2 int64
+		var count int64
 		global.Db.Model(&model.ViewContact{}).
 			Where("creator = ?", f.UserId).
 			Where("created_at >= ?", time.Date(
@@ -330,8 +330,8 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 				0, 0, 0, 0,
 				time.Now().Location())).
 			Where("business_type = ?", forRent.TableName()).
-			Count(&count2)
-		if count2 >= int64(ordinaryUser.TotalTimesForViewingForRentContactPerDay) {
+			Count(&count)
+		if count >= int64(ordinaryUser.TotalTimesForViewingForRentContactPerDay) {
 			return nil, util.ErrorNumberOfTimesIsUsedUp1, nil
 		}
 	}
@@ -357,14 +357,12 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 			time.Now().Location())).
 		Where("business_type = ?", forRent.TableName()).
 		Count(&count)
-	println("count:", count)
 	//判断今日是否已用完次数
 	if count >= int64(member.TotalTimesForViewingForRentContactPerDay) {
-		println("total:", member.TotalTimesForViewingForRentContactPerDay)
 		return nil, util.ErrorNumberOfTimesIsUsedUp2, nil
 	}
 
-	//保留访问记录
+	//更新访问记录
 	//判断以前是否获取过联系方式
 	global.Db.
 		Where("business_type = ?", forRent.TableName()).
@@ -372,7 +370,6 @@ func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, er
 		Where("creator = ?", f.UserId).
 		Limit(1).
 		Find(&viewContact)
-	println("viewContact:", viewContact.Id)
 	//如果有记录，则更新
 	if viewContact.Id > 0 {
 		err = global.Db.Model(&viewContact).
