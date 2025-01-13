@@ -236,7 +236,6 @@ func (f *ForRentGet) Get() (result *ForRentResult, resCode int, errDetail *util.
 }
 
 func (f *ForRentGetContact) GetContact() (result *ForRentResult, resCode int, errDetail *util.ErrDetail) {
-
 	//获取出租记录
 	var forRent model.ForRent
 	err := global.Db.

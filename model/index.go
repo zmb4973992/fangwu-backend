@@ -87,6 +87,8 @@ func ConnectToPgsql() {
 		&Footprint{},         //足迹
 		&ViewContact{},       //查看联系方式
 		&Community{},         //小区
+		&Member{},            //会员类型
+		&UserMember{},        //用户的会员情况
 	)
 	if err != nil {
 		global.SugaredLogger.Panicln(err)
