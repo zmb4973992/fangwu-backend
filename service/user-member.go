@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type MemberGet struct {
+type UserMemberGet struct {
 	UserId int64 `json:"-"`
 }
 
-type MemberResult struct {
+type UserMemberResult struct {
 	City                                           AdminDivResult `json:"city,omitempty"`
 	Type                                           string         `json:"type,omitempty"`
 	RemainingTimesForViewingForRentContactPerDay   int            `json:"remaining_times_for_viewing_for_rent_contact_per_day,omitempty"`
